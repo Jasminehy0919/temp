@@ -1,8 +1,14 @@
-token = auth.issue_jwt(user_info)
-is_admin = any("aradmin" in str(g).lower() for g in user_info.get("member_of", []))
-user_info_with_sub = {**user_info, "sub": user_info.get("username", ""), "is_admin": is_admin}
-return {
-    "token":       token,
-    "user":        user_info_with_sub,
-    "auth_config": auth.get_auth_config(),
+/**
+ * Returns true if the current logged-in user is in the AD admin group
+ * (ARADMIN), which grants edit rights on the "Global" keyword list.
+ */
+export function isGlobalKeywordAdmin() {
+  try {
+    const user = JSON.parse(sessionStorage.getItem('redactor_user') || '{}');
+    if (typeof user.is_admin === 'boolean') return user.is_admin;
+    const memberOf = user.member_of || [];
+    return memberOf.some(g => String(g).toLowerCase().includes('aradmin'));
+  } catch {
+    return false;
+  }
 }
