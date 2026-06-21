@@ -1,7 +1,1 @@
-The guards keep failing — first blank page, then tabs not switching, now content is still bleeding across tabs. Stop patching individual guards. Before making any more changes:
-
-	1.	Show me the full _switchSlot() function as it currently stands, including every place that reads or writes currentSlot, #slotSwitchToken, #loading, and any other shared state touched during a switch.
-	2.	Explain, step by step, what happens when two switches overlap (e.g., user goes Tab A → Tab B → Tab C quickly): which async calls are in flight, when each token is assigned, when each is compared, and when shared state gets mutated.
-	3.	Identify every point where shared/rendered state is mutated, and confirm each mutation is guarded by the same token check.
-
-Don’t apply a fix yet — first show me the trace so we can confirm the actual root cause before changing code again.
+This confirms the root cause. Before you write any code, tell me your fix plan: will every shared-state mutation (including the early resets, and everything inside _loadSlotPdf) be gated by a token check, or will you restructure so mutations only happen after all async work for that switch is done? Also tell me: with your fix, can two switches still run their early-reset mutations concurrently, or will a new switch’s token now also cause any earlier in-flight switch to skip its early resets too?
