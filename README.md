@@ -1,99 +1,50 @@
-I'm preparing for a technical interview where I need to explain the design and 
-implementation of this application in detail. You have access to the codebase — 
-please answer the following questions with SPECIFIC, ACCURATE details based on 
-actually reading the code, not general assumptions. Where relevant, point me to 
-the specific file/function so I can double check. Name actual libraries, 
-functions, config values, and file names used in this codebase wherever possible.
+I'm preparing for a technical interview and need to understand exactly how our 
+E2E testing was implemented. Please answer using SPECIFIC details from the 
+actual code/test files — file names, function names, config values — not 
+general assumptions.
 
-Please organize your answer using the same numbered headers below so I can match 
-your answers back to my questions easily.
+## 1. Test Framework & Setup
+- Confirm: is Playwright (Python) used for E2E, and Vitest for unit tests? 
+Where are the config files for each (e.g. playwright config, vitest.config.js)?
+- How are tests organized — one file per feature/suite, or another structure?
+- How is the mock or real AD (Active Directory) set up for auth tests — is 
+there a mock LDAP server, stubbed responses, or a real test AD instance?
 
-## 1. Keyword Matching Engine
-- How exactly is "partial matching" implemented — substring match, regex with 
-wildcards, or something else (e.g., tokenization + fuzzy match like Levenshtein)?
-- Is matching case-insensitive by default?
-- How are overlapping matches handled (e.g., keyword "OSFI" and keyword 
-"OSFI Report" both matching the same text)?
-- How is performance handled when a file has thousands of words and a keyword 
-list has hundreds of entries — what's the algorithmic approach (naive O(n*m) 
-scan, Aho-Corasick, indexing)?
-- How are false positives/negatives handled or reduced?
-- What file types are supported (PDF, DOCX, TXT, scanned/image PDFs)? How is 
-text extracted from each (e.g., PyMuPDF, pdfplumber, OCR)?
+## 2. Test Scenario Coverage
+- I have a document called E2E-TEST-SCENARIOS.md listing scenarios like 
+AUTH-01 through AUTH-13 and SESS-01 through SESS-07+ with priorities (P0-P3) 
+and coverage percentages (e.g. Auth 85%, Session lifecycle 78%, overall ~72%). 
+Are these scenario IDs actually implemented as real test cases in the test 
+files? Can you find the actual test file(s) and confirm how many of these 
+scenario IDs have corresponding test code?
+- How was the coverage percentage (e.g. "85%", "72% overall") calculated — is 
+there a coverage tool, or was this an estimate written by whoever authored the 
+spec?
 
-## 2. Session Management (no DB)
-- Since there's no database, where is session state actually stored — in-memory 
-(per server process), Redis, filesystem/temp storage, or browser-side?
-- How does "session sharing for secondary review" work technically without a 
-DB — is there a session ID/token, and where does the underlying file + 
-redaction state live so a second user can open the same session?
-- What happens if the server restarts — is session state lost? Is there any 
-persistence at all (e.g., temp files on disk)?
-- How long does a session live — is there a TTL/expiration and cleanup process?
-- With FastAPI being async, how is session state kept consistent if multiple 
-async requests touch the same session concurrently (race conditions on shared 
-session data)?
-- If deployed across multiple server instances/pods, how is session state 
-shared across instances (since no DB/no shared cache would mean sessions are 
-pinned to one instance)?
+## 3. Known Gaps (from the "Hard-to-discover gaps" section)
+- For AUTH-03/04 (rate limit state is in-memory per worker): is there evidence 
+in the test code of how this was handled — e.g., does the test explicitly 
+restart the server, or account for the in-memory state some other way?
+- For AUTH-07 (Safari private browsing blocking localStorage): is there an 
+actual Playwright browser context configured for this, or is this scenario 
+still just documented but not implemented?
+- For AUTH-12 (server blacklist is in-memory, so a second worker wouldn't see 
+revocation): is there any code addressing this limitation, or is it purely 
+documented as a known risk?
 
-## 3. Concurrency & Scalability
-- What specifically does FastAPI's async model buy us here — is it async I/O 
-(file reads, TeamMate+ API calls) or also concurrent CPU-bound keyword scanning?
-- Are CPU-heavy tasks (keyword scanning across large files) run in a thread 
-pool / background workers to avoid blocking the event loop?
-- Is there any queueing (e.g., background task queue) for processing large 
-files, or is it all synchronous request/response?
-- How is the app deployed — single instance, multiple instances behind a load 
-balancer, containerized (Docker/Kubernetes)?
-- Are there any caching layers (e.g., caching keyword lists in memory per 
-session)?
+## 4. How AI Was Used to Build the Tests
+- Can you tell from file comments, commit messages, or structure whether these 
+test scenarios/files were AI-generated, AI-assisted, or hand-written? 
+- Is there any evidence of a workflow where scenarios were planned first (like 
+in E2E-TEST-SCENARIOS.md) and then an AI tool was used to generate the actual 
+Playwright test code from that spec?
 
-## 4. Security Controls
-- Encryption at rest: what exactly is encrypted at rest — uploaded files, temp 
-storage, keyword lists? What's the mechanism (disk-level encryption, encrypting 
-individual files with a key, cloud provider-managed encryption)?
-- Encryption in transit: is this just HTTPS/TLS for all traffic, or is there 
-additional encryption for specific calls (e.g., to TeamMate+)?
-- Authentication: how exactly does LDAP + AD group integration work — is it 
-validating credentials against AD directly, or via an SSO/token layer? What 
-determines a user's permissions (are AD groups mapped to app roles)?
-- Authorization: are there different permission levels (e.g., who can redact 
-vs who can only review) tied to AD groups?
-- Locks: what locks exist in the app (e.g., file locks to prevent two users 
-editing the same file/session simultaneously, or session locks during review)? 
-What triggers a lock, how is it released, what happens if a user closes the 
-browser without releasing it?
-- Is uploaded file data ever logged (e.g., in application logs, error logs) — 
-any risk of sensitive content leaking into logs?
-- How are temp files cleaned up after a session ends — securely deleted, or 
-just standard file deletion?
-- Is there any audit logging of who redacted what, and when?
+## 5. Running the tests
+- Confirm the actual commands to run the full E2E suite vs a smoke subset 
+(I believe it's something like `cd tests/e2e && uv run pytest -v` for full, 
+and `uv run pytest test_smoke_first_cut.py -v` for smoke — please confirm 
+exact commands from AGENTS.md or the test folder itself).
+- Roughly how long does the full E2E suite take to run?
 
-## 5. File Import/Export & TeamMate+ Integration
-- How does the TeamMate+ integration authenticate (API key, OAuth, service 
-account)?
-- Is there error handling/retry logic if TeamMate+ is unavailable or slow?
-- How are multiple files handled — processed in parallel or sequentially?
-- What does the "export" step actually produce — is redaction "true" redaction 
-(content permanently removed/burned in) or just a visual overlay?
-
-## 6. Frontend
-- What's the frontend built in (React, Vue, plain JS)?
-- How does the UI render highlights on top of a PDF/document — is there a PDF 
-rendering library (e.g., pdf.js) with an overlay layer for highlights?
-- How does the frontend communicate redaction state to the backend — REST 
-calls per action, or batched?
-
-## 7. AI-Assisted Development
-- Which AI tool(s) were used to write code — GitHub Copilot, Claude, ChatGPT, 
-Cursor? (Answer from memory/commit history/comments if this isn't inferable 
-from code alone.)
-- For the POC-to-FastAPI migration: what did the generated "feature specs" 
-actually look like (format — markdown, structured JSON, plain prose)? Do those 
-spec files still exist in the repo?
-- Roughly what % of the FastAPI codebase looks AI-generated vs. hand-written 
-(based on commit patterns, comments, or code style consistency)?
-- Can you identify any code that looks like it was AI-generated and later 
-corrected/rewritten (e.g., commit history showing a revert or significant 
-rewrite shortly after initial commit)?
+Please organize your answer with the same numbered headers so I can match it 
+up with my questions.
