@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Redactor Pro — Project Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F6F7F4; --surface:#FFFFFF; --surface-soft:#EFF2ED;
+    --ink:#2B3532; --ink-soft:#75847F; --line:#DDE4DD;
+    --accent:#6E8F86; --accent-deep:#4C6961; --gold:#C9A876; --tag-bg:#E7EDE5;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; }
+  h1,h2,h3{ font-family:'Newsreader',serif; font-weight:500; letter-spacing:-0.01em; margin:0; }
+
+  .shell{ display:grid; grid-template-columns:250px 1fr; min-height:100vh; }
+  @media (max-width:900px){ .shell{ grid-template-columns:1fr; } .nav{ position:static !important; height:auto !important; border-right:none; border-bottom:1px solid var(--line); } }
+
+  .nav{ position:sticky; top:0; height:100vh; overflow-y:auto; padding:30px 20px; border-right:1px solid var(--line); background:var(--surface); }
+  .nav-brand{ font-family:'Newsreader',serif; font-size:0.98rem; font-weight:600; color:var(--accent-deep); }
+  .nav-sub{ font-size:0.7rem; color:var(--ink-soft); margin-bottom:22px; }
+  .nav-list{ list-style:none; margin:0; padding:0; }
+  .nav-list a{ display:block; text-decoration:none; color:var(--ink-soft); font-size:0.78rem; padding:6px 0 6px 12px; border-left:2px solid var(--line); }
+  .nav-list a:hover{ color:var(--accent-deep); border-left-color:var(--accent); }
+  .nav-list .num{ font-family:'IBM Plex Mono',monospace; font-size:0.64rem; color:var(--gold); margin-right:6px; }
+  .nav-group{ font-family:'IBM Plex Mono',monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); margin:16px 0 4px 12px; }
+
+  main{ max-width: 900px; }
+  .slide{ padding: 50px 60px 54px 60px; border-bottom: 1px solid var(--line); }
+  @media (max-width:700px){ .slide{ padding:34px 20px; } }
+
+  .cover{ padding-top:64px; padding-bottom:56px; }
+  .cover h1{ font-size:clamp(1.8rem,4vw,2.9rem); max-width:18ch; line-height:1.25; }
+  .cover .sub{ margin-top:18px; font-size:1rem; color:var(--ink-soft); max-width:56ch; line-height:1.6; }
+
+  .kicker{ font-family:'IBM Plex Mono',monospace; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); margin-bottom:8px; }
+  .headline{ font-size:clamp(1.3rem,2.3vw,1.75rem); line-height:1.35; max-width:30ch; margin-bottom:26px; }
+
+  .pill{ display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:0.68rem; background:var(--tag-bg); color:var(--accent-deep); padding:6px 12px; border-radius:14px; margin:3px 8px 3px 0; }
+  .flag{ display:inline-flex; gap:7px; align-items:center; font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:#9A7B3F; background:#FBF3E4; border:1px solid #EDDCB8; padding:8px 14px; border-radius:7px; margin: 4px 8px 4px 0; }
+  .ok{ color:var(--accent-deep); background:var(--tag-bg); border-color:var(--line); }
+
+  .block{ margin-bottom: 26px; }
+  .block:last-child{ margin-bottom:0; }
+
+  .flow{ display:flex; flex-direction:column; gap:0; }
+  .flow-step{ display:flex; align-items:center; gap:14px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+  .flow-step:first-child{ padding-top:0; }
+  .flow-step:last-child{ border-bottom:none; padding-bottom:0; }
+  .flow-step .n{ flex-shrink:0; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--surface-soft); border:1px solid var(--line); font-family:'IBM Plex Mono',monospace; font-size:0.74rem; color:var(--accent-deep); }
+  .flow-step .t{ font-size:0.95rem; }
+  .flow-step .d{ font-size:0.8rem; color:var(--ink-soft); margin-top:2px; }
+
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:640px){ .compare{ grid-template-columns:1fr; } }
+  .compare-col{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px 20px; }
+  .compare-col.before{ border-color:#E4CFC0; background:#FBF4EF; }
+  .compare-col.after{ border-color:var(--accent); background:var(--surface-soft); }
+  .compare-col .lab{ font-family:'IBM Plex Mono',monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px; }
+  .compare-col.before .lab{ color:#B37B4F; }
+  .compare-col.after .lab{ color:var(--accent-deep); }
+  .compare-col .big{ font-family:'Newsreader',serif; font-size:1.1rem; line-height:1.4; }
+
+  .stats{ display:flex; gap:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .stat{ flex:1; padding: 16px 18px; border-right:1px solid var(--line); }
+  .stat:last-child{ border-right:none; }
+  .stat .num{ font-family:'Newsreader',serif; font-size:1.6rem; color:var(--accent-deep); line-height:1.1; }
+  .stat .lab{ font-size:0.75rem; color:var(--ink-soft); margin-top:3px; }
+  @media (max-width:640px){ .stats{ flex-direction:column; } .stat{ border-right:none; border-bottom:1px solid var(--line); } .stat:last-child{ border-bottom:none; } }
+
+  .vt{ position:relative; padding-left:22px; border-left:2px solid var(--line); }
+  .vt-item{ position:relative; padding-bottom:20px; }
+  .vt-item:last-child{ padding-bottom:0; }
+  .vt-item::before{ content:''; position:absolute; left:-27px; top:4px; width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 2px var(--accent); }
+  .vt-item .tt{ font-family:'IBM Plex Mono',monospace; font-size:0.66rem; color:var(--accent-deep); text-transform:uppercase; letter-spacing:0.04em; }
+  .vt-item .hh{ font-family:'Newsreader',serif; font-size:1rem; margin-top:3px; }
+
+  .loop-row{ display:flex; align-items:flex-start; gap:6px; flex-wrap:wrap; }
+  .loop-item{ text-align:center; width:104px; }
+  .loop-item .circ{ width:46px; height:46px; border-radius:50%; background:var(--surface); border:2px solid var(--accent); display:flex; align-items:center; justify-content:center; margin:0 auto 8px auto; font-family:'IBM Plex Mono',monospace; font-size:0.8rem; color:var(--accent-deep); }
+  .loop-item .tt{ font-size:0.8rem; line-height:1.3; }
+  .loop-arrow{ color:var(--ink-soft); font-size:1rem; padding-top:14px; }
+
+  .box{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px 20px; }
+  .box .tt{ font-family:'IBM Plex Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent-deep); margin-bottom:10px; }
+  .box ul{ margin:0; padding-left:18px; }
+  .box li{ margin-bottom:7px; font-size:0.92rem; line-height:1.45; }
+  .box li:last-child{ margin-bottom:0; }
+  .box li::marker{ color:var(--accent); }
+  .box p{ margin:0; font-size:0.92rem; line-height:1.55; color:var(--ink); }
+
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:640px){ .grid2{ grid-template-columns:1fr; } }
+
+  .say{ border-left:3px solid var(--accent); background:var(--surface-soft); padding:14px 18px; border-radius:0 8px 8px 0; }
+  .say .lab{ display:block; font-family:'IBM Plex Mono',monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-deep); margin-bottom:6px; }
+  .say p{ margin:0; font-style:italic; font-size:0.93rem; line-height:1.55; }
+
+  footer{ padding:36px 60px 56px 60px; color:var(--ink-soft); font-size:0.78rem; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="nav">
+    <div class="nav-brand">PDF Redactor Pro</div>
+    <div class="nav-sub">Project Walkthrough</div>
+    <ul class="nav-list">
+      <li><a href="#s0"><span class="num">00</span>Overview</a></li>
+      <li><a href="#s1"><span class="num">01</span>POC — Flask</a></li>
+      <li><a href="#s2"><span class="num">02</span>Feature List &amp; JIRA</a></li>
+    </ul>
+    <div class="nav-group">Main Build</div>
+    <ul class="nav-list">
+      <li><a href="#s3"><span class="num">03</span>Why FastAPI</a></li>
+      <li><a href="#s3b"><span class="num">·</span>System Diagram</a></li>
+      <li><a href="#s3c"><span class="num">·</span>Design Choices</a></li>
+      <li><a href="#s3d"><span class="num">·</span>The AI Loop</a></li>
+      <li><a href="#s3e"><span class="num">·</span>AGENTS.md</a></li>
+      <li><a href="#s3f"><span class="num">·</span>New Feature Flow</a></li>
+      <li><a href="#s3g"><span class="num">·</span>Bug Flow</a></li>
+      <li><a href="#s3h"><span class="num">·</span>Repo &amp; PR Review</a></li>
+      <li><a href="#s3i"><span class="num">·</span>Testing</a></li>
+    </ul>
+    <div class="nav-group">Beyond the Code</div>
+    <ul class="nav-list">
+      <li><a href="#s4"><span class="num">04</span>Everything Else</a></li>
+      <li><a href="#s5"><span class="num">05</span>Lessons</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- 00 OVERVIEW -->
+    <div class="slide cover" id="s0">
+      <h1>A redaction tool for audit &amp; compliance, built with AI</h1>
+      <p class="sub">The audit and compliance team had a manual redaction process — download a report, run a local script to highlight keywords, then go through Adobe Pro one highlight at a time to redact or clear it. Every user needed a paid Adobe license. Once a word was redacted, it was gone, so a second reviewer couldn't verify it. My director had spent nearly a year trying to get IBM to build a custom solution — once that was rejected, we decided to build it ourselves, and I led it.</p>
+    </div>
+
+    <!-- 01 POC -->
+    <section class="slide" id="s1">
+      <div class="kicker">01</div>
+      <h2 class="headline">Started with a proof of concept in Python Flask</h2>
+      <div class="box">
+        <p>There was no BA and no formal requirements document, so instead of waiting for a spec, I built a working proof of concept in JavaScript and Python Flask based on our best understanding of what the audit team needed.</p>
+      </div>
+    </section>
+
+    <!-- 02 FEATURE LIST / JIRA -->
+    <section class="slide" id="s2">
+      <div class="kicker">02</div>
+      <h2 class="headline">Several rounds of stakeholder review shaped the real feature list</h2>
+      <div class="flow">
+        <div class="flow-step"><div class="n">1</div><div><div class="t">Show the POC to the audit team</div></div></div>
+        <div class="flow-step"><div class="n">2</div><div><div class="t">Multiple rounds of review and revision</div></div></div>
+        <div class="flow-step"><div class="n">3</div><div><div class="t">Finalized feature list, fully documented</div></div></div>
+        <div class="flow-step"><div class="n">4</div><div><div class="t">Imported into JIRA — ~120 tickets</div></div></div>
+      </div>
+    </section>
+
+    <!-- 03 WHY FASTAPI -->
+    <section class="slide" id="s3">
+      <div class="kicker">03 — The Real Build</div>
+      <h2 class="headline">Rebuilding in FastAPI, with AI doing the migration</h2>
+      <div class="block">
+        <div class="compare">
+          <div class="compare-col before"><div class="lab">POC</div><div class="big">Flask — one request per worker</div></div>
+          <div class="compare-col after"><div class="lab">Production</div><div class="big">FastAPI — async, handles concurrency</div></div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="tt">Why we moved</div>
+        <p>Once we knew our real scale — 700 to 800 users, with usage spiking at month and quarter-end — Flask's one-request-at-a-time-per-worker model wasn't going to hold up. FastAPI is built around async, so it handles many concurrent requests without blocking.</p>
+      </div>
+      <div class="block" style="margin-top:20px;">
+        <div class="flow">
+          <div class="flow-step"><div class="n">1</div><div><div class="t">AI reads the working Flask POC</div></div></div>
+          <div class="flow-step"><div class="n">2</div><div><div class="t">Generates documented feature specs describing what each part does</div></div></div>
+          <div class="flow-step"><div class="n">3</div><div><div class="t">Those specs get implemented in FastAPI</div></div></div>
+        </div>
+      </div>
+      <span class="pill">a reviewable middle layer — not a blind line-by-line rewrite</span>
+    </section>
+
+    <!-- 3b SYSTEM DIAGRAM -->
+    <section class="slide" id="s3b">
+      <div class="kicker">System Architecture</div>
+      <h2 class="headline">How the pieces connect</h2>
+      <div class="block">
+        <svg viewBox="0 0 1040 400" style="width:100%; height:auto; font-family:'Inter',sans-serif;">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="#6E8F86"></path>
+            </marker>
+          </defs>
+          <text x="20" y="12" font-size="11" letter-spacing="1" fill="#C9A876" font-family="'IBM Plex Mono',monospace">FRONTEND</text>
+          <rect x="20" y="20" width="260" height="56" rx="8" fill="#FFFFFF" stroke="#DDE4DD"/>
+          <text x="36" y="42" font-size="13" fill="#2B3532" font-weight="600">UI Components</text>
+          <text x="36" y="60" font-size="10.5" fill="#75847F">session-mgr.js · pdf-renderer.js · find-panel.js</text>
+          <rect x="20" y="88" width="260" height="40" rx="8" fill="#FFFFFF" stroke="#DDE4DD"/>
+          <text x="36" y="108" font-size="13" fill="#2B3532" font-weight="600">Signal Store</text>
+          <text x="36" y="122" font-size="10.5" fill="#75847F">store.js</text>
+          <rect x="20" y="144" width="260" height="132" rx="8" fill="#EFF2ED" stroke="#DDE4DD"/>
+          <text x="36" y="164" font-size="12" fill="#4C6961" font-weight="600">API Client — api-client.js</text>
+          <rect x="34" y="176" width="108" height="86" rx="6" fill="#FFFFFF" stroke="#DDE4DD"/>
+          <text x="48" y="200" font-size="12" fill="#2B3532" font-weight="600">sessionQueue</text>
+          <text x="48" y="216" font-size="10" fill="#75847F">serial, not</text>
+          <text x="48" y="228" font-size="10" fill="#75847F">cancellable</text>
+          <text x="48" y="246" font-size="9.5" fill="#75847F">save · load · export</text>
+          <rect x="158" y="176" width="108" height="86" rx="6" fill="#FFFFFF" stroke="#DDE4DD"/>
+          <text x="172" y="200" font-size="12" fill="#2B3532" font-weight="600">findQueue</text>
+          <text x="172" y="216" font-size="10" fill="#75847F">cancellable on</text>
+          <text x="172" y="228" font-size="10" fill="#75847F">slot switch</text>
+          <text x="172" y="246" font-size="9.5" fill="#75847F">find · positions</text>
+          <text x="400" y="12" font-size="11" letter-spacing="1" fill="#C9A876" font-family="'IBM Plex Mono',monospace">BACKEND — FASTAPI</text>
+          <rect x="400" y="20" width="280" height="56" rx="8" fill="#FFFFFF" stroke="#6E8F86" stroke-width="1.5"/>
+          <text x="416" y="42" font-size="13" fill="#2B3532" font-weight="600">Routes</text>
+          <text x="416" y="60" font-size="10.5" fill="#75847F">server.py — /sessions · /redact · /positions</text>
+          <rect x="400" y="96" width="280" height="40" rx="8" fill="#FFFFFF" stroke="#DDE4DD"/>
+          <text x="416" y="116" font-size="12.5" fill="#2B3532" font-weight="600">Auth — LDAP + JWT</text>
+          <text x="416" y="130" font-size="10" fill="#75847F">_auth.py</text>
+          <rect x="400" y="152" width="280" height="40" rx="8" fill="#FFFFFF" stroke="#DDE4DD"/>
+          <text x="416" y="172" font-size="12.5" fill="#2B3532" font-weight="600">PDF Processing — PyMuPDF</text>
+          <text x="416" y="186" font-size="10" fill="#75847F">match · redact · page structure</text>
+          <rect x="400" y="208" width="280" height="52" rx="8" fill="#FBF3E4" stroke="#EDDCB8"/>
+          <text x="416" y="228" font-size="12.5" fill="#2B3532" font-weight="600">Session Store</text>
+          <text x="416" y="242" font-size="10" fill="#75847F">_session_store.py</text>
+          <text x="416" y="254" font-size="10" fill="#9A7B3F" font-weight="600">JSON files + portalocker — NO DATABASE</text>
+          <rect x="400" y="272" width="280" height="40" rx="8" fill="#FFFFFF" stroke="#DDE4DD"/>
+          <text x="416" y="292" font-size="12.5" fill="#2B3532" font-weight="600">Doc Cache</text>
+          <text x="416" y="306" font-size="10" fill="#75847F">_doc_cache.py — doc_id → bytes/pages</text>
+          <line x1="540" y1="76" x2="540" y2="96" stroke="#DDE4DD" stroke-width="2" marker-end="url(#arrow)"/>
+          <line x1="540" y1="136" x2="540" y2="152" stroke="#DDE4DD" stroke-width="2" marker-end="url(#arrow)"/>
+          <line x1="540" y1="192" x2="540" y2="208" stroke="#DDE4DD" stroke-width="2" marker-end="url(#arrow)"/>
+          <line x1="540" y1="260" x2="540" y2="272" stroke="#DDE4DD" stroke-width="2" marker-end="url(#arrow)"/>
+          <text x="800" y="12" font-size="11" letter-spacing="1" fill="#C9A876" font-family="'IBM Plex Mono',monospace">EXTERNAL</text>
+          <rect x="800" y="20" width="220" height="56" rx="8" fill="#F6F7F4" stroke="#DDE4DD" stroke-dasharray="4 3"/>
+          <text x="816" y="42" font-size="13" fill="#2B3532" font-weight="600">TeamMate+</text>
+          <text x="816" y="60" font-size="10.5" fill="#75847F">vendor REST + SCIM</text>
+          <rect x="800" y="96" width="220" height="40" rx="8" fill="#F6F7F4" stroke="#DDE4DD" stroke-dasharray="4 3"/>
+          <text x="816" y="116" font-size="12.5" fill="#2B3532" font-weight="600">LDAP / AD</text>
+          <text x="816" y="130" font-size="10" fill="#75847F">directory server</text>
+          <line x1="280" y1="200" x2="398" y2="60" stroke="#6E8F86" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+          <text x="292" y="150" font-size="10.5" fill="#4C6961" font-weight="600">REST/JSON + JWT Bearer</text>
+          <text x="292" y="163" font-size="9.5" fill="#75847F">↕ PDF blob &amp; JSON responses</text>
+          <line x1="680" y1="116" x2="798" y2="116" stroke="#6E8F86" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+          <text x="690" y="108" font-size="10" fill="#4C6961" font-weight="600">LDAP bind / search</text>
+          <line x1="680" y1="48" x2="798" y2="48" stroke="#6E8F86" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+          <text x="695" y="40" font-size="10" fill="#4C6961" font-weight="600">Bearer API key</text>
+          <text x="700" y="70" font-size="9.5" fill="#75847F">reports · docs · SCIM</text>
+          <rect x="20" y="336" width="1000" height="44" rx="8" fill="#EFF2ED" stroke="#DDE4DD"/>
+          <text x="36" y="354" font-size="11.5" fill="#2B3532" font-weight="600">No database, anywhere in this system.</text>
+          <text x="36" y="370" font-size="10.5" fill="#75847F">Sessions are file-based JSON with file locking. Redaction runs through PyMuPDF, not a visual overlay.</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- 3c DESIGN CHOICES -->
+    <section class="slide" id="s3c">
+      <div class="kicker">Design Choices</div>
+      <h2 class="headline">Why we built it this way</h2>
+      <div class="block grid2">
+        <div class="box">
+          <div class="tt">No database</div>
+          <p>File-based JSON sessions, with file locking, were fast to build and easy to reason about at our scale. The tradeoff — it doesn't scale cleanly across multiple server instances without more work — is one I'm upfront about.</p>
+        </div>
+        <div class="box">
+          <div class="tt">Two separate queues</div>
+          <p>The session queue (save/load/export) is serial and never cancelled, since interrupting a save is dangerous. The find queue is cancellable, so switching files mid-search doesn't waste work on results nobody will see.</p>
+        </div>
+      </div>
+      <div class="block grid2">
+        <div class="box">
+          <div class="tt">True redaction, not an overlay</div>
+          <p>We use PyMuPDF's actual redaction, not a visual overlay. Forensics tests confirm both the visible text and the hidden text layer are removed — a classic real-world compliance failure is redaction that leaves text extractable underneath.</p>
+        </div>
+        <div class="box">
+          <div class="tt">Optimistic concurrency</div>
+          <p>Two people saving conflicting session changes get a 409 conflict, not a silent overwrite — important for a tool built around second-reviewer collaboration.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3d THE AI LOOP -->
+    <section class="slide" id="s3d">
+      <div class="kicker">How We Used AI — Day to Day</div>
+      <h2 class="headline">A repeatable loop, not ad hoc prompting</h2>
+      <div class="block">
+        <div class="loop-row">
+          <div class="loop-item"><div class="circ">1</div><div class="tt">Analyze tradeoffs first</div></div>
+          <div class="loop-arrow">→</div>
+          <div class="loop-item"><div class="circ">2</div><div class="tt">Implement + generate tests</div></div>
+          <div class="loop-arrow">→</div>
+          <div class="loop-item"><div class="circ">3</div><div class="tt">Copilot Chat reviews the diff</div></div>
+          <div class="loop-arrow">→</div>
+          <div class="loop-item"><div class="circ">4</div><div class="tt">Human approves</div></div>
+          <div class="loop-arrow">→</div>
+          <div class="loop-item"><div class="circ">5</div><div class="tt">Summarize what changed</div></div>
+        </div>
+      </div>
+      <div class="say">
+        <span class="lab">Step 1, in my own words</span>
+        <p>Before implementing anything non-trivial, I wrote a template we'd run it through first: which layer does this touch — frontend, backend, or both? Does it affect existing session behavior? What are the tradeoffs between approaches? What's the risk? Only after that did we write any code.</p>
+      </div>
+    </section>
+
+    <!-- 3e AGENTS.md -->
+    <section class="slide" id="s3e">
+      <div class="kicker">The Governance Layer</div>
+      <h2 class="headline">AGENTS.md — read by every AI session, first</h2>
+      <div class="block grid2">
+        <div class="box">
+          <div class="tt">Maps the project</div>
+          <ul><li>Where the backend, frontend, and tests live — so AI isn't guessing every session</li></ul>
+        </div>
+        <div class="box">
+          <div class="tt">Documents pitfalls we'd already learned</div>
+          <ul>
+            <li>File-based sessions aren't multi-process safe without a dedicated redesign</li>
+            <li>401 and 403 are different outcomes — conflating them caused a real bug</li>
+          </ul>
+        </div>
+      </div>
+      <div class="box">
+        <div class="tt">Required workflow for any change</div>
+        <div class="flow" style="margin-top:8px;">
+          <div class="flow-step"><div class="n">1</div><div class="t">Confirm which layer is affected</div></div>
+          <div class="flow-step"><div class="n">2</div><div class="t">Read the relevant files first</div></div>
+          <div class="flow-step"><div class="n">3</div><div class="t">Make the smallest consistent change</div></div>
+          <div class="flow-step"><div class="n">4</div><div class="t">Validate with the narrowest test first</div></div>
+          <div class="flow-step"><div class="n">5</div><div class="t">Report what changed and what wasn't tested</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3f NEW FEATURE FLOW -->
+    <section class="slide" id="s3f">
+      <div class="kicker">When a New Feature Comes In</div>
+      <h2 class="headline">From JIRA ticket to shipped code</h2>
+      <div class="flow">
+        <div class="flow-step"><div class="n">1</div><div><div class="t">Pick up a JIRA ticket</div><div class="d">Owned by whoever chose that feature area</div></div></div>
+        <div class="flow-step"><div class="n">2</div><div><div class="t">Run it through the pre-implementation template</div><div class="d">Layer, session impact, tradeoffs, risk — before any code</div></div></div>
+        <div class="flow-step"><div class="n">3</div><div><div class="t">AI implements, following AGENTS.md conventions</div></div></div>
+        <div class="flow-step"><div class="n">4</div><div><div class="t">AI generates the matching unit test file</div><div class="d">Vitest, alongside the implementation — not an afterthought</div></div></div>
+        <div class="flow-step"><div class="n">5</div><div><div class="t">Copilot Chat reviews the local diff before a PR</div></div></div>
+        <div class="flow-step"><div class="n">6</div><div><div class="t">Human review, then merge</div></div></div>
+      </div>
+    </section>
+
+    <!-- 3g BUG FLOW -->
+    <section class="slide" id="s3g">
+      <div class="kicker">When a Bug Comes In</div>
+      <h2 class="headline">A structured triage workflow — not free-form debugging</h2>
+      <div class="block">
+        <div class="flow">
+          <div class="flow-step"><div class="n">1</div><div><div class="t">Classify what owns the defect</div><div class="d">Backend, frontend, or tests</div></div></div>
+          <div class="flow-step"><div class="n">2</div><div><div class="t">Check the defect history first</div><div class="d">Have we already made a related decision?</div></div></div>
+          <div class="flow-step"><div class="n">3</div><div><div class="t">Reproduce before touching anything</div></div></div>
+          <div class="flow-step"><div class="n">4</div><div><div class="t">Keep the fix scoped to one bug class</div></div></div>
+          <div class="flow-step"><div class="n">5</div><div><div class="t">Validate smallest test first, then broader</div></div></div>
+        </div>
+      </div>
+      <div class="box" style="margin-top:6px;">
+        <div class="tt">Example — bug-012</div>
+        <p>A manual-draw redaction box saved with an empty text field, since the geometry was captured but text was never extracted. Caught by comparing it against the keyword-match path and noticing inconsistent behavior. Fixed by extracting text from the cached page structure at commit time. Written into the defect history so it wouldn't resurface.</p>
+      </div>
+    </section>
+
+    <!-- 3h REPO & PR -->
+    <section class="slide" id="s3h">
+      <div class="kicker">Repo &amp; Pull Request Management</div>
+      <h2 class="headline">Bitbucket, and where AI review actually happens</h2>
+      <div class="box">
+        <p>Our code lives in Bitbucket — and GitHub Copilot's automated PR review feature is actually GitHub-only, it doesn't work natively with Bitbucket. So AI-assisted review happens in the IDE instead: before opening a PR, Copilot Chat reviews the local diff against AGENTS.md conventions, flagging logic issues, missed edge cases, or anything touching session state or auth. The final approval stays a human decision — I wanted a teammate to genuinely understand a change, not approve it because a tool said it looked fine.</p>
+      </div>
+    </section>
+
+    <!-- 3i TESTING -->
+    <section class="slide" id="s3i">
+      <div class="kicker">Testing</div>
+      <h2 class="headline">Unit tests generated with the code. E2E — planned wide, shipped narrow.</h2>
+      <div class="block grid2">
+        <div class="box">
+          <div class="tt">Unit tests</div>
+          <p>For most features, AI generated the corresponding Vitest test file in the same request as the implementation — coverage built in, not bolted on afterward.</p>
+        </div>
+        <div class="box">
+          <div class="tt">E2E — honest scope</div>
+          <p>We planned a full scenario matrix upfront, prioritized P0–P3 with estimated coverage per area. What actually shipped is a smoke suite — about 13 tests covering P0 critical paths. The percentages were planning estimates, not measured coverage, and I say that plainly rather than overstate it.</p>
+        </div>
+      </div>
+      <span class="flag">known gap — a few edge cases (Safari private mode, in-memory rate limits) documented as risk, not yet automated</span>
+    </section>
+
+    <!-- 04 EVERYTHING ELSE -->
+    <section class="slide" id="s4">
+      <div class="kicker">04 — Beyond the Code</div>
+      <h2 class="headline">Everything else that had to happen</h2>
+
+      <div class="block grid2">
+        <div class="box">
+          <div class="tt">Infrastructure</div>
+          <ul>
+            <li>Server on IIS, NSSM as reverse proxy</li>
+            <li>DNS / SSL, AD groups added to LAM</li>
+            <li>Firewall rules, auth, deployment pipeline</li>
+          </ul>
+        </div>
+        <div class="box">
+          <div class="tt">AI beyond code</div>
+          <ul>
+            <li>Drafting stakeholder emails</li>
+            <li>Draft UAT/QA test cases generated from JIRA tickets</li>
+            <li>User manual rebuilt as HTML, styled like the app</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="vt">
+          <div class="vt-item"><div class="tt">Given</div><div class="hh">"End of July, if a miracle happens"</div></div>
+          <div class="vt-item"><div class="tt">My move</div><div class="hh">Set an internal target of mid-July — two weeks of buffer</div></div>
+          <div class="vt-item"><div class="tt">Backward plan</div><div class="hh">IST close → UAT close → QA close → server ready → user access</div></div>
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:6px;">
+        <div class="tt">Knowing when to stop</div>
+        <p>We'd spent real time chasing an AI-assisted smart-search feature. Instead of dropping it on a hunch, I checked whether any bank tool already had a working AI feature in production — found it was just a SaaS capability, not built internally. That told me there was no internal precedent, so I recommended we stop and focus on what we could ship. My director agreed, because the recommendation came with the research behind it. We still submitted the AI intake request so it stays queued for later.</p>
+      </div>
+    </section>
+
+    <!-- 05 LESSONS -->
+    <section class="slide" id="s5">
+      <div class="kicker">05 — Lessons</div>
+      <h2 class="headline">What I'd carry into the next project</h2>
+      <div class="block grid2">
+        <div class="box"><div class="tt">Lesson 1</div><p>Back a "stop" call with research, not instinct.</p></div>
+        <div class="box"><div class="tt">Lesson 2</div><p>Write hard lessons into durable docs, not tribal knowledge — that's what AGENTS.md became.</p></div>
+      </div>
+      <div class="block">
+        <div class="box"><div class="tt">Lesson 3</div><p>Without a BA, ship a POC and let user feedback define the real spec.</p></div>
+      </div>
+    </section>
+
+    <footer>PDF Redactor Pro — Project Walkthrough</footer>
+  </main>
+</div>
+</body>
+</html>
