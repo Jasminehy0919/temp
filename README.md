@@ -1,5 +1,15 @@
 好，那我把之前整理的实现要求 + 这次的"不改动现有逻辑"约束，合并成一条完整消息，你一次性发给它：
 
+
+	•	Use TimedRotatingFileHandler with when='W6' so weeks align to calendar Sunday boundaries (e.g., current week through 7/19/2026, next week 7/20–7/26, etc.)
+	•	Retention: approximately 13 weekly files (~90 days). Confirm this number.
+
+app.log: daily rotation
+
+	•	Use TimedRotatingFileHandler with when='midnight'
+	•	Retention: 90 daily files (backupCount=90)Show me example rotated filenames for both (e.g., audit.log.2026-07-19 and app.log.2026-07-17) before finalizing.
+
+Both should use utc=True for rotation timing, consistent with UTC timestamps in the log content.
 ---
 
 **Approved — please proceed with implementation based on your proposed design, with these adjustments and constraints:**
