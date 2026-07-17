@@ -1,40 +1,40 @@
-Context: The app currently has no durable, on-disk application log. What we saw earlier in err.log was uvicorn/console output only (printed via Python’s logging module to stdout), without timestamps, without rotation, and lost on restart. We want to build a proper logging system from scratch.
+好，那我把之前整理的实现要求 + 这次的"不改动现有逻辑"约束，合并成一条完整消息，你一次性发给它：
 
-Please design the following, and answer the questions below, before writing any code:
+---
 
-1. File structure — exactly 2 log files, not more
+**Approved — please proceed with implementation based on your proposed design, with these adjustments and constraints:**
 
-	•	audit.log: every user-facing event, in one chronological stream. Must include at minimum: precise timestamp (date+time, explicit timezone or UTC), username, event type, and relevant IDs (session_id, doc_id, share_id) — structured consistently (e.g., key=value pairs) so it’s easy to grep/filter by user or time range.
-	•	app.log: everything else — internal errors, warnings, startup/shutdown, cache operations, unhandled exception tracebacks with full stack trace and request context.
+## Important constraint: purely additive, no behavior changes
+This work must not change any existing function's behavior, return values, response codes, or control flow. You're adding log statements and a new middleware layer, not modifying business logic.
 
-Please don’t split further into per-event-type files — one audit.log with consistent structure is easier to review than scattered files.
+**Before writing any code, please confirm:**
+1. Adding audit log calls at the hook points you identified (e.g., `server.py:1376` for login, `_session_store.py:1043` for session cleanup) — will these be simple additions (a log line inserted into existing code paths) with zero changes to what the function returns or how it behaves? Or does any hook point require restructuring existing logic to get the data needed for logging?
+2. The global exception-handling middleware — confirm it only adds a new layer that *catches and logs* unhandled exceptions before returning a controlled 500, and won't change behavior for requests that currently succeed, or alter responses for errors already explicitly handled by existing try/except blocks — only genuinely unhandled ones.
+3. Rerouting existing module logs (auth/cache/session) into `app.log` via root logger config — confirm this only changes *where log output goes*, not any conditional logic that happens to also call `logging.info(...)`.
 
-2. Audit events to capture
+**If any hook point requires touching business logic (not just adding a log call), flag it specifically so we can decide together whether it's worth it — don't make that change silently.**
 
-	•	Login: username, timestamp, source IP if available.
-	•	Logout: both explicit logout and session expiry/timeout (TTL-based), since users may just close the tab.
-	•	Session lifecycle: session created, session expired — include session duration.
-	•	Sharing: when a share is created (who, when, which doc), and when/if it’s accessed by someone other than the original session owner — referencing the _share_store.py mechanism seen earlier.
-	•	Also flag any other actions worth audit-logging for this compliance-sensitive (audit-document) context — e.g., file upload, redaction export, download — and propose which ones matter most.
+## Design adjustments from earlier discussion
 
-3. Timestamps
+**1. Share caveat — go with Option 3:** Since share routes are intentionally disabled, don't re-enable them. Use `session_link_accessed_by_non_owner` as the practical substitute for share-access auditing for now.
 
-All log lines (both files) must include precise timestamps. This applies to existing log statements too (auth, cache, sessions), not just new ones.
+**2. Rotation: weekly (calendar weeks ending Sunday), not daily:**
+- Use `TimedRotatingFileHandler` with `when='W6'` so weeks align to calendar Sunday boundaries (e.g., current week through 7/19/2026, next week 7/20–7/26, etc.)
+- Recalculate `backupCount` for ~90 days retention using weekly files — approximately **13 weekly files** (90 ÷ 7 ≈ 13). Confirm this number.
+- Show me an example rotated filename before f
+## Everything else stays as designed:
+- Two-file architecture (`audit.log` + `app.log`), no additional event-type files
+- Structured key=value format, one line per event, consistent field order
+- UTC timestamps with milliseconds
+- Full event list as proposed (login/logout, session lifecycle, sharing substitute, document handling, redaction/export/download, security/admin events)
+- QueueHandler + QueueListener for async writes (no blocking on hot paths)
+- Config additions under a `logging` section (enabled, dir, retention, rotate_when, level, audit_level, app_level)
 
-4. Rotation
+**Please answer the 3 confirmation questions above first. Once confirmed with no concerns, proceed with implementation. After it's done, show me:**
+1. A sample of what `audit.log` looks like after a typical session (login → file upload → redact → export → logout)
+2. The exact log file paths being used
+3. Confirmation that existing module logs (auth/cache/session) are now flowing into `app.log` with timestamps
 
-Time-based (daily) rotation for both files, retaining a configurable number of days (suggest 90 as default, adjustable via config). Files roll over at midnight (e.g., audit.log → audit.log.2026-07-17).
+---
 
-5. Global exception handling
-
-Add exception-handling middleware so any unhandled error in any endpoint logs a full traceback with request context (path, method, username if available) to app.log, rather than silently returning a bare connection reset or an unlogged 500.
-
-Please answer these questions in your analysis:
-
-	•	Where in the code does login currently happen, and where is the most natural hook point to log it?
-	•	Where does logout / session expiry currently get detected (TTL check on read? background cleanup thread?) — is there an existing hook, or does one need to be added?
-	•	Where in _share_store.py is the natural hook point for share creation/access logging?
-	•	Proposed log file paths and the specific logging library/mechanism you’ll use for rotation (e.g., Python’s TimedRotatingFileHandler).
-	•	Any risk of the new audit logging adding meaningful latency to hot paths (e.g., logging on every /positions call, if that ends up being audit-worthy) — and how to avoid that.
-
-Give me the full analysis and design first. I will confirm before you write any code.
+这条发过去后，它应该会先回答那 3 个确认问题（有没有需要碰业务逻辑的地方），你看完确认没问题，再让它接着实现。
