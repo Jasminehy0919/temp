@@ -1,7 +1,5 @@
-This all looks solid, no major concerns. Let’s proceed in the order you recommended:
+Fix 2 confirmed working — blackout is gone, and /positions 404s dropped from ~5-6 down to 2 out of ~79 requests in this test run. This confirms Fix 1 is still needed to fully close the race.
 
-1. Implement Fix 2 first (frontend concurrency throttling) — start with N=4 (matching the 4-worker count). Keep onPageResult/progress logic and AbortController signal sharing exactly as-is, just cap concurrent in-flight requests.
+One new observation: this run also showed a single 404 on /sessions/current — not seen before. Can you check if this is the same class of read/write race (session store), or something else? Just flag it, no need to fix unless it’s related.
 
-2. Once Fix 2 is done, implement Fix 1 (backend atomic meta.json writes) — temp file + os.replace, with unique temp naming (pid/tid/random suffix) and add stale temp file cleanup to the existing cache cleanup loop at _doc_cache.py:298.
-
-Please implement Fix 2 now. Stop after Fix 2 is complete and let me test in IST before starting Fix 1.
+Please proceed with Fix 1 now (atomic meta.json writes) as planned.
