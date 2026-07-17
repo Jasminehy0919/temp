@@ -1,14 +1,7 @@
-Before implementing, please do a quick risk analysis on both fixes at the implementation level:
+This all looks solid, no major concerns. Let’s proceed in the order you recommended:
 
-For Fix 1 (atomic meta.json writes):
+1. Implement Fix 2 first (frontend concurrency throttling) — start with N=4 (matching the 4-worker count). Keep onPageResult/progress logic and AbortController signal sharing exactly as-is, just cap concurrent in-flight requests.
 
-	1.	Does switching to temp-file + os.replace interact safely with the existing threading.Lock in _doc_cache.py:41? Any risk of the lock being held across the temp-write + rename in a way that changes timing elsewhere?
-	2.	Any risk of orphaned temp files accumulating if the process crashes mid-write (e.g., temp file naming/cleanup strategy)?
-	3.	Does this change affect the TTL-slide read path’s performance noticeably given how often it’s called (once per successful get)?
+2. Once Fix 2 is done, implement Fix 1 (backend atomic meta.json writes) — temp file + os.replace, with unique temp naming (pid/tid/random suffix) and add stale temp file cleanup to the existing cache cleanup loop at _doc_cache.py:298.
 
-For Fix 2 (frontend concurrency throttling):
-
-	1.	Does capping concurrency to N change the user’s perceived behavior in a way that matters — e.g., does onProgress/onPageResult currently assume all pages resolve near-simultaneously, and could batching introduce a “stalling” visual effect or reorder result arrival unexpectedly?
-	2.	Is there any existing timeout/abort logic (e.g., AbortController, opts.signal) that assumes all requests are in-flight together, which might break with sequential batching?
-	3.	What’s the right batch size — is N=4-6 arbitrary, or should it match something concrete like the actual worker count or a measured backend capacity limit?
-	4.	Could this fix alone (without Fix 1) already reduce the 404 rate enough that Fix 1’s urgency changes? Or are they independent enough that order doesn’t matter?
+Please implement Fix 2 now. Stop after Fix 2 is complete and let me test in IST before starting Fix 1.
