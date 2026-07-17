@@ -1,1 +1,3 @@
-Additional question: when the frontend fans out per-page /positions calls (found earlier at find-panel.js:1978/2005), are all ~79 requests fired concurrently/in parallel, or are they throttled/queued (e.g., max N in flight at a time)? If they’re unthrottled, this could explain both the backend 404 race (many simultaneous reads/writes hitting the same cache) and a client-side crash/blackout (browser GPU process overwhelmed by concurrent Canvas rendering triggered by rapid-fire responses). Please check the concurrency pattern in the fan-out loop and report back before we decide whether to add request throttling on the frontend in addition to the atomic-write backend fix.
+
+
+	1.	Does capping concurrency to N change the user’s perceived behavior in a way that matters — e.g., does onProgress/onPageResult currently assume all pages resolve near-simultaneously, and could
