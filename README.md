@@ -1,5 +1,4 @@
-Fix 2 confirmed working — blackout is gone, and /positions 404s dropped from ~5-6 down to 2 out of ~79 requests in this test run. This confirms Fix 1 is still needed to fully close the race.
+Great news — the /positions race is fixed, zero 404s on it this run. Separate, unrelated minor issue spotted: a request to a URL containing literal unescaped template syntax:
+%7B%7Burl_f_on.png'%20%7D%7D  →  decodes to  {{url_f_on.png' }}
 
-One new observation: this run also showed a single 404 on /sessions/current — not seen before. Can you check if this is the same class of read/write race (session store), or something else? Just flag it, no need to fix unless it’s related.
-
-Please proceed with Fix 1 now (atomic meta.json writes) as planned.
+This looks like a template placeholder (Jinja2 or JS template string) that isn’t being substituted correctly somewhere, producing a broken image/icon URL. Can you find where this template string originates and fix the substitution? Low priority — doesn’t seem to block core functionality — but worth a quick look since it’s been showing up since our very first debugging session.
