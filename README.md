@@ -1,30 +1,10 @@
-I need a system architecture diagram for a technical interview. Based on 
-the actual codebase, create a diagram (as an SVG, or describe it in a 
-structured way I can turn into one) showing:
+Questions about the /positions endpoint and caching architecture
 
-1. All major components: frontend (vanilla JS + custom elements), FastAPI 
-backend, PyMuPDF processing layer, file-based session store, LDAP/JWT auth, 
-and the TeamMate+ integration.
-
-2. For each component, show the KEY data flowing between them — e.g., what 
-exactly goes from frontend to backend on a redaction request, what comes 
-back, what gets written to session storage.
-
-3. Show where the two async queues live (session queue vs. find queue) in 
-frontend/src/api-client.js, and what each is responsible for.
-
-4. Show the session lifecycle stages (create/load/save/delete/claim/release/
-export) as a small state diagram or flow, referencing the actual function/
-endpoint names from backend/server.py.
-
-5. Mark clearly where there is NO database — file-based JSON with file 
-locking (portalocker) — since that's an important architectural decision 
-to explain.
-
-6. Mark the TeamMate+ integration boundary — what leaves our system, what 
-comes back, and the auth method (Bearer API key).
-
-Please give me the actual box/arrow layout with labels — even a simple 
-text-based layout description (boxes, connections, labels) is fine, I'll 
-turn it into a clean diagram myself. Reference actual file names for each 
-box so I know it's grounded in the real code, not a generic guess.
+	1.	Where is the doc_id → document data mapping stored after conversion/caching? Is it an in-process Python dict/variable, or is it persisted to disk/SQLite/Redis/a shared file? (Log lines show [cache] stored doc_xxx and a separate [shares] dir=F:\...\cache\shares path — are these the same storage mechanism or two different ones?)
+	2.	Is this cache/store shared across all 4 uvicorn worker processes, or is each worker maintaining its own independent copy in memory?
+	3.	If it’s file-based, what read/write mechanism is used? (portalocker was mentioned — confirm whether it’s used for file locking on a shared file, or whether the underlying data actually lives in per-process memory with the lock just protecting something else.)
+	4.	Why does the /positions endpoint get called once per page individually (e.g., a separate POST with page_num: 45, one candidate) instead of batching all pages/candidates into a single request? Was this an intentional design choice (e.g., streaming/progressive rendering), or could it be refactored into a bulk request to reduce the ~79 sequential round-trips for a 79-page doc?
+	5.	What does the /positions handler do when it receives a doc_id it doesn’t recognize? Does it return a 404, or is there a fallback (e.g., re-fetch from disk cache, re-derive from session)? Confirm the exact code path that produces the 404 response with body {"detail": ...} (75 bytes).
+	6.	Is there any TTL/expiry logic on the cache that could cause a valid doc_id to be evicted mid-session while the frontend is still issuing requests for it? (Logs show TTL expired, deleting doc_xxx — could this race with an in-flight sequence of 79 /positions calls?)
+	7.	Given 4 workers behind IIS ARR round-robin, is there any session-affinity / sticky-session configuration, or does ARR route each request to any worker regardless of which worker originally created the doc_id?
+	8.	Is there a global exception handler / middleware logging unhandled exceptions? If not, can one be added so that any 500-level or unexpected failure produces a full traceback in a log file (not just silently returning 404 or dropping the connection)?
