@@ -1,13 +1,14 @@
-Fix my MCP configuration so the Confluence server runs from this workspace only.
+Please do the following and tell me what you changed:
 
-1. Replace the entire contents of .vscode/mcp.json in this workspace with ONLY a "confluence" server:
-   - type: stdio
+1. Fix the malformed frontmatter in .github/agents/confluence.agent.md (the opening "---" is broken, it currently shows something like "deve---"). It must start with a clean "---" line, then the YAML fields, then a closing "---". Do not change the rest of the content.
+
+2. Move my workspace MCP config to the new location. Create .mcp.json in the workspace root (C:\Jasmine's Agent\.mcp.json) with ONLY the "confluence" server, using the format VS Code currently expects for that file:
    - command: ${workspaceFolder}/.venv/Scripts/python.exe
    - args: ["${workspaceFolder}/confluence_mcp.py"]
    - env: CONFLUENCE_BASE_URL = https://confluence.agile.bns, CONFLUENCE_TOKEN = ${input:confluence-token}
-   - inputs: one promptString input with id "confluence-token", description "Confluence Personal Access Token", password true
-   Do NOT include the io.draw/mcp or com.atlassian servers, and do NOT include "gallery" or "version" fields.
+   - an input of type promptString with id "confluence-token", description "Confluence Personal Access Token", password true
+   Then delete the deprecated .vscode/mcp.json so there is only one workspace config.
 
-2. In my user-level mcp.json (C:\Users\s4754194\AppData\Roaming\Code\User\mcp.json), remove ONLY the "confluence" server entry and the "confluence-token" input. Keep io.draw/mcp and com.atlassian/atlassian-mcp-server exactly as they are.
+3. Check that the files have no errors in the Problems panel.
 
-3. Check that both files are valid JSON with no errors in the Problems panel, then tell me what you changed. Never write or ask for my actual token; it is entered through the VS Code password prompt when the server starts.
+4. Never write, ask for, or log my real token. It is entered only through the VS Code password prompt when the server starts.
