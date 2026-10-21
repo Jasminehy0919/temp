@@ -1,14 +1,16 @@
-Please do the following and tell me what you changed:
+MCP is disabled by my organization (chat.mcp.access = none), so do not use MCP. Refactor confluence_mcp.py into a plain Python CLI script, confluence_cli.py, in this workspace. Keep confluence_mcp.py untouched.
 
-1. Fix the malformed frontmatter in .github/agents/confluence.agent.md (the opening "---" is broken, it currently shows something like "deve---"). It must start with a clean "---" line, then the YAML fields, then a closing "---". Do not change the rest of the content.
+Target: https://confluence.agile.bns (read from CONFLUENCE_BASE_URL, default to this). Auth: Bearer token from the CONFLUENCE_TOKEN environment variable. Never hardcode, print, or log the token. Support optional CONFLUENCE_CA_BUNDLE for corporate certificates.
 
-2. Move my workspace MCP config to the new location. Create .mcp.json in the workspace root (C:\Jasmine's Agent\.mcp.json) with ONLY the "confluence" server, using the format VS Code currently expects for that file:
-   - command: ${workspaceFolder}/.venv/Scripts/python.exe
-   - args: ["${workspaceFolder}/confluence_mcp.py"]
-   - env: CONFLUENCE_BASE_URL = https://confluence.agile.bns, CONFLUENCE_TOKEN = ${input:confluence-token}
-   - an input of type promptString with id "confluence-token", description "Confluence Personal Access Token", password true
-   Then delete the deprecated .vscode/mcp.json so there is only one workspace config.
+argparse subcommands with JSON output:
+- search --query "<CQL>" [--limit 10]
+- get --page-id <id>
+- create --space <key> --title <t> --body-file <path> [--parent-id <id>]
+- update --page-id <id> --body-file <path> [--title <t>]  (fetch the current version first, then write version+1)
+- delete --page-id <id> --confirm  (without --confirm, only print what would be deleted)
 
-3. Check that the files have no errors in the Problems panel.
+Use requests with timeouts and clear error messages for 401, 403, 404, 409.
 
-4. Never write, ask for, or log my real token. It is entered only through the VS Code password prompt when the server starts.
+Then update .github/agents/confluence.agent.md so the agent uses these terminal commands instead of MCP tools. Fix its frontmatter if malformed (it must start with a clean "---" line). Keep the rule that create, update, and delete require my explicit confirmation first, and never ask me to paste the token in chat.
+
+Finally, tell me how to set CONFLUENCE_TOKEN in the PowerShell terminal for the current session only.
