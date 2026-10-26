@@ -1,0 +1,18 @@
+## Project-Specific Focus: Redactor Pro
+
+Pay particular attention to:
+
+1. End-to-end document processing and redaction workflow.
+2. How sensitive information is identified, classified, validated, and redacted.
+3. The roles of Python, FastAPI, JavaScript, and document-processing libraries.
+4. Whether Gemini, Hugging Face, semantic search, or other AI models are used in the production application, prototypes, or development workflows.
+5. Technical decisions concerning accuracy, false positives, false negatives, document integrity, and processing performance.
+6. Whether the system supports multiple document formats and how it handles them.
+7. Data privacy, access control, file storage, temporary files, and cleanup.
+8. Error handling, testing, and deployment mechanisms.
+9. Custom development agents, skills, AGENTS.md, specification-driven development, and AI-assisted debugging, where evidence exists.
+10. Which architecture and implementation details best demonstrate my hands-on engineering abilities.
+
+Most importantly, distinguish between **AI used to develop Redactor Pro** and **AI functionality actually implemented inside Redactor Pro**.
+
+Identify the three strongest engineering decisions worth highlighting in my resume.
