@@ -1,0 +1,18 @@
+## Project-Specific Focus: IFRS17 Workflow Management Application
+
+Pay particular attention to:
+
+1. End-to-end file ingestion architecture, from business-user upload to downstream processing.
+2. How the web application integrates with SFTP, Apache NiFi, SQL Server, Moody's, and other systems actually present in the repository.
+3. Why direct SFTP access was replaced with an application-controlled upload mechanism.
+4. File validation, authentication, authorization, and security boundaries.
+5. Job triggering, workflow orchestration, dependency management, and processing status tracking.
+6. Duplicate uploads, partial failures, retries, error recovery, and data integrity controls.
+7. Reporting architecture, configurable filters, and access to generated output reports.
+8. Auditability, logging, production monitoring, and operational support.
+9. Architecture choices that preserve existing enterprise systems while satisfying new security and business requirements.
+10. Evidence of independent technical ownership and complex system integration.
+
+If AutoSys monitoring, LLM agents, MCP, CLI integrations, or Confluence audit automation are located in another repository, do not assume they are implemented here.
+
+Identify the three strongest architectural decisions and explain the technical trade-offs supported by repository evidence.
