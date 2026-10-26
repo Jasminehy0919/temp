@@ -1,0 +1,218 @@
+# Senior Software Engineer — Codebase Architecture & Resume Analysis
+
+You are acting as a Staff Software Engineer, Software Architect, and Technical Hiring Manager evaluating this repository for a candidate targeting:
+
+1. OpenAI — Software Engineer / Backend Software Engineer
+2. Anthropic — Forward Deployed Engineer (FDE)
+3. Senior Software Engineer / AI Engineer
+
+## Objective
+
+Perform a thorough, evidence-based analysis of the current repository to identify the actual engineering work, architectural decisions, technical complexity, and production-readiness demonstrated by this project.
+
+**This is NOT a code review or refactoring task.**
+
+Your goal is to help me accurately communicate my engineering contributions on a senior-level resume and prepare for technical interviews.
+
+Do not modify any source code, configuration, or project files.
+
+## Step 1 — Understand the System
+
+Inspect the relevant codebase, including application entry points, backend services, frontend components, APIs, database models, integrations, configuration, tests, and deployment workflows.
+
+Identify:
+
+- Business problem and application purpose, where documented
+- Overall system architecture
+- Technology stack and frameworks
+- Core application components and their responsibilities
+- End-to-end data flow and request lifecycle
+- External systems and third-party integrations
+- Authentication, authorization, and security controls
+- Deployment architecture and CI/CD implementation
+- Error handling, logging, monitoring, and recovery mechanisms
+- Testing strategy and code organization
+
+Explain how the system actually works based on source-code evidence.
+
+Distinguish implemented functionality from prototypes, experiments, unused dependencies, and planned features.
+
+## Step 2 — Identify Architectural Decisions
+
+This is the most important section.
+
+Identify 5–10 significant architectural or engineering decisions reflected in the code.
+
+For each decision, explain:
+
+1. **Problem:** What technical or business problem does the design address?
+2. **Constraints:** What constraints are explicitly documented or observable?
+3. **Decision:** What architecture, implementation, or technology was chosen?
+4. **Alternatives:** What reasonable alternatives exist? Which alternatives were actually documented as considered?
+5. **Trade-offs:** What does the chosen approach optimize, and what limitations does it introduce?
+6. **Evidence:** Which code components, configurations, tests, or documentation support your conclusion?
+7. **Interview Value:** Why would this decision be meaningful in a Senior Software Engineer interview?
+
+Important: Do not invent historical reasoning. If the code shows a design choice but not why it was made, label your explanation as a possible rationale requiring developer confirmation.
+
+## Step 3 — Evaluate Engineering Depth
+
+Analyze the system from the perspective of a senior software engineer.
+
+Look for meaningful evidence of:
+
+- Modularity and separation of concerns
+- API and service design
+- Data processing architecture
+- Database design and data integrity
+- Concurrency and asynchronous execution
+- Performance and scalability
+- Fault tolerance and recovery
+- Reliability and observability
+- Security and access boundaries
+- Integration with legacy or enterprise systems
+- Maintainability and extensibility
+- Automated testing and deployment
+- AI/LLM integration, if applicable
+
+For each area, distinguish between:
+
+- Demonstrated in the code
+- Partially demonstrated
+- Not found or not verifiable
+
+Do not claim distributed processing, high availability, production scale, or advanced AI capabilities without supporting evidence.
+
+## Step 4 — Identify Engineering Challenges
+
+Identify the five most technically interesting problems solved by this application.
+
+For each:
+
+- Describe the challenge
+- Identify the implementation used
+- Explain the technical complexity
+- Identify any meaningful design trade-offs
+- Describe the outcome supported by the code
+- Suggest what business or performance evidence I should confirm
+
+Focus on problems that demonstrate independent engineering judgment rather than routine framework usage.
+
+## Step 5 — Evaluate AI Engineering
+
+If the application uses AI, LLMs, or AI agents, identify:
+
+- Models, APIs, and libraries used
+- Runtime AI capabilities versus AI-assisted development tooling
+- Prompt and context management
+- Tool calling, MCP, CLI, or API integrations
+- Agent orchestration and execution flow
+- Human-in-the-loop controls
+- Failure handling and fallback mechanisms
+- Evaluation, testing, and quality controls
+- Cost, token, and latency considerations
+- Security and privacy safeguards
+
+Clearly distinguish AI features included in the deployed application from AI tools used during software development.
+
+Do not classify a deterministic workflow as an autonomous AI agent without evidence of model-driven decisions or tool selection.
+
+## Step 6 — Extract Resume-Worthy Achievements
+
+Identify the 5–8 strongest engineering contributions demonstrated by the repository.
+
+Prioritize:
+
+1. Architecture and technical ownership
+2. Engineering decisions and trade-offs
+3. Complex integrations and implementation
+4. Reliability, security, and production engineering
+5. Measurable outcomes, where verified
+6. AI engineering depth, where applicable
+
+Draft:
+
+- 3 concise, technically strong Project resume bullets
+- 2–3 Work Experience bullets emphasizing leadership, ownership, and business impact
+
+Each bullet should preferably fit within 1–2 lines of a standard two-page resume.
+
+Use strong but accurate verbs such as Architected, Designed, Engineered, Implemented, and Built.
+
+Avoid generic phrases such as "leveraged cutting-edge technologies" or "developed scalable solutions" unless the underlying claims are demonstrated.
+
+Do not invent ownership, performance metrics, costs, user counts, or production outcomes.
+
+## Step 7 — Evaluate Against Target Roles
+
+Assess the engineering evidence for:
+
+**OpenAI Software Engineer**
+- Backend engineering
+- System architecture
+- Reliability and performance
+- API and database design
+- Security
+- Product engineering
+- Technical ownership
+
+**Anthropic Forward Deployed Engineer**
+- Understanding business workflows
+- Enterprise system integration
+- AI/LLM engineering
+- Agent and tool integration
+- Rapid implementation and iteration
+- Deployment and production reliability
+- Human oversight and evaluation
+
+For each role, identify:
+
+- Three strongest demonstrated capabilities
+- Three areas needing better evidence
+- Potential technical interview questions
+
+## Step 8 — Identify Missing Context
+
+List questions that cannot be answered from code alone, such as:
+
+- Why was a particular architecture selected?
+- What alternatives did the engineer reject?
+- What business constraints drove the design?
+- What was my personal ownership versus team ownership?
+- What changed after deployment?
+- How were time savings, adoption, or cost savings measured?
+- What scale did the system actually handle in production?
+
+Do not fill these gaps with assumptions.
+
+## Step 9 — Prepare a Shareable Resume Analysis
+
+Produce a self-contained Markdown report with these sections:
+
+1. Executive Technical Summary
+2. System Architecture and Data Flow
+3. Technology Stack and Component Responsibilities
+4. Key Architectural Decisions and Trade-offs
+5. Engineering Challenges and Implementations
+6. Security, Reliability, and Production Readiness
+7. AI Engineering Analysis (if relevant)
+8. Strongest Resume Evidence
+9. Proposed Work Experience and Project Bullets
+10. OpenAI SWE / Anthropic FDE Assessment
+11. Questions Requiring Developer Confirmation
+
+For important technical conclusions, reference the relevant repository file paths and function/class names in the local analysis.
+
+**Accuracy and confidentiality requirements:**
+
+- Never expose credentials, tokens, environment secrets, customer information, confidential data, or proprietary business logic.
+- Do not copy source code into the final report.
+- Do not include internal hostnames, endpoints, database schemas, or security-sensitive implementation details in the shareable report.
+- Generalize internal system names and architecture details when necessary.
+- Clearly label findings as VERIFIED, INFERRED, or NEEDS CONFIRMATION.
+- Do not claim to have inspected files that were not accessed.
+- If the repository is too large to analyze fully, identify unreviewed areas instead of pretending the analysis is complete.
+
+The final report must be suitable for further resume refinement without disclosing confidential enterprise information.
+
+Start by inspecting the repository before drawing conclusions.
