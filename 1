@@ -1,0 +1,133 @@
+I am preparing my resume for Senior Software Engineer, Applied AI Engineer, and Forward Deployed Engineer roles.
+
+Please perform a thorough, evidence-based technical review of this repository. I am considering presenting this work as a standalone project titled "AI-Powered Workflow Monitoring & Data Lineage Agents."
+
+**Important:** Analyze the actual source code, configuration, scripts, and documentation. Do not assume a capability exists simply because it is mentioned in a README or suggested by the project name.
+
+## 1. Project Overview & Business Problem
+
+Explain:
+- What business and operational problems this system solves.
+- What the system actually does from start to finish.
+- Which manual workflows it replaces or improves.
+- How AutoSys, SQL Server, job dependencies, file arrivals, reporting, and notifications are involved.
+- Which capabilities are implemented versus planned or documented only.
+
+## 2. System Architecture
+
+Identify:
+- Major architectural components and their responsibilities.
+- Programming languages, frameworks, libraries, APIs, and integrations.
+- How the components communicate and exchange data.
+- Data flow from input through processing to output.
+- How execution is triggered: manually, scheduled, event-driven, or through an agent.
+- How state, persistence, logging, error handling, and recovery are implemented.
+
+Provide a concise architecture diagram in Mermaid if the code supports one.
+
+## 3. AI Agent Architecture — Critical Assessment
+
+Determine whether the system is:
+
+A. An LLM-powered runtime agent that uses models for reasoning and tool selection.
+
+B. An AI-assisted automation system built using coding assistants, where runtime execution follows predefined logic.
+
+C. A hybrid system combining LLM-based agents and deterministic automation.
+
+Investigate specifically:
+- Whether an LLM is invoked during runtime.
+- Which models or model APIs are actually used.
+- Whether MCP servers, MCP clients, custom tools, CLI tools, or function calling are implemented.
+- How tools are discovered, selected, and executed.
+- Whether the agent can perform multi-step reasoning or dynamically plan actions.
+- Whether there is context management, memory, state persistence, or human approval.
+- Whether retries, timeouts, validation, permissions, and failure recovery exist.
+- What is autonomous versus manually initiated.
+
+Distinguish carefully between **AI used to develop the software** and **AI operating as part of the deployed system**.
+
+Do not describe the project as an autonomous LLM agent unless the implementation supports that claim.
+
+## 4. Data Lineage & Enterprise Integrations
+
+Examine how the system:
+- Retrieves and interprets AutoSys job information.
+- Queries SQL Server job execution records.
+- Tracks upstream and downstream dependencies.
+- Correlates file arrival times, job status, and execution history.
+- Identifies failed jobs, blocking dependencies, or processing bottlenecks.
+- Produces status reports, notifications, or audit-trail updates.
+- Integrates with other enterprise systems, if applicable.
+
+Explain whether data lineage is explicitly modeled, dynamically inferred, or derived from predefined dependency mappings.
+
+## 5. Engineering Complexity & Decisions
+
+Identify the three to five most technically challenging aspects of the implementation.
+
+For each, explain:
+- The engineering problem.
+- How it was implemented.
+- Why the design matters.
+- Any trade-offs, limitations, or alternatives visible in the repository.
+
+Pay particular attention to reliability, scalability, operational safety, observability, security, and maintainability.
+
+## 6. Production Readiness & Measurable Impact
+
+Determine what evidence exists for:
+- Production deployment versus prototype or local development.
+- Automated execution and monitoring.
+- Number of jobs, workflows, systems, files, or teams supported.
+- Reduction in manual reporting effort.
+- Failure detection and recovery capabilities.
+- Security controls, testing, CI/CD, and operational reliability.
+
+Do not invent metrics.
+
+If the repository cannot prove a business metric, explicitly label it **"Requires business confirmation."**
+
+## 7. Evidence & Confidence
+
+For every significant technical claim, cite the relevant file path and function, class, configuration, or code section.
+
+Classify major claims as:
+- **Verified in code**
+- **Documented but not verified**
+- **Requires confirmation**
+- **Not implemented**
+
+If the repository contains multiple independent tools or projects, distinguish them rather than presenting everything as one integrated application.
+
+Do not expose secrets, credentials, tokens, connection strings, or sensitive company data in your report.
+
+## 8. Resume Recommendations
+
+Based only on verified capabilities:
+
+1. Recommend the most technically accurate project title.
+2. Identify the strongest capabilities for a Senior Software Engineer resume.
+3. Identify the strongest capabilities for an Applied AI Engineer / Forward Deployed Engineer resume.
+4. Draft 3–4 concise, impact-oriented resume bullets emphasizing:
+   - Architecture and technical ownership
+   - Hands-on implementation
+   - AI/agent engineering, only if verified
+   - Enterprise integration and business impact
+5. Identify anything that would be misleading or overstated on my resume.
+
+## Final Output Format
+
+Please organize the report into these sections:
+
+1. Executive Technical Summary
+2. Architecture & Technology Stack
+3. AI Agent Classification and Evidence
+4. Core Implementation Details
+5. Engineering Decisions & Challenges
+6. Production Readiness & Business Impact
+7. Verified Claims with Source File References
+8. Suggested Resume Project Title and Bullets
+9. Open Questions Requiring My Confirmation
+
+Prioritize technical accuracy and concrete engineering contributions over generic descriptions or marketing language.
