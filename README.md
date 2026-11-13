@@ -9,361 +9,294 @@
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
-  --bg:#F2F4F7; --panel:#FFFFFF; --ink:#16233B; --muted:#5B6980; --line:#A9B4C4;
-  --accent:#E0861A; --chip:#E4E9F0;
-  --trig:#6B57A8; --sys:#2F5DA8; --inc:#C2412D; --wait:#2B7A78; --data:#8A6A1F;
+  --bg:#EEF1F6; --panel:#FFFFFF; --ink:#16233B; --muted:#5B6980; --line:#C9D1DD;
+  --hdr1:#1B2F6E; --hdr2:#2B47A0; --hdr-ink:#FFFFFF;
+  --flow:#3B4A66; --green:#2E7D4F; --red:#C2412D; --navy:#2B3F8F;
+  --trig:#6B57A8; --sys:#2F5DA8; --inc:#C2412D; --wait:#2B7A78; --data:#8A6A1F; --dec:#B5651D;
+  --warn:#FFF6DD; --warn-line:#E6C766;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0F1724; --panel:#17233A; --ink:#E6ECF5; --muted:#94A3B8; --line:#41536F;
-    --accent:#F2A33A; --chip:#223250;
-    --trig:#A895E6; --sys:#7FA6E8; --inc:#F08A78; --wait:#6CC3BF; --data:#D8B25C;
+    --bg:#0E1522; --panel:#16223A; --ink:#E6ECF5; --muted:#9AA9BF; --line:#2F4163;
+    --hdr1:#162552; --hdr2:#22397F; --hdr-ink:#FFFFFF;
+    --flow:#9DB0CF; --green:#58B27D; --red:#F08A78; --navy:#8FA6F0;
+    --trig:#A895E6; --sys:#7FA6E8; --inc:#F08A78; --wait:#6CC3BF; --data:#D8B25C; --dec:#E0A060;
+    --warn:#2D2A18; --warn-line:#6B5A1F;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0F1724; --panel:#17233A; --ink:#E6ECF5; --muted:#94A3B8; --line:#41536F;
-  --accent:#F2A33A; --chip:#223250;
-  --trig:#A895E6; --sys:#7FA6E8; --inc:#F08A78; --wait:#6CC3BF; --data:#D8B25C;
+  --bg:#0E1522; --panel:#16223A; --ink:#E6ECF5; --muted:#9AA9BF; --line:#2F4163;
+  --hdr1:#162552; --hdr2:#22397F; --hdr-ink:#FFFFFF;
+  --flow:#9DB0CF; --green:#58B27D; --red:#F08A78; --navy:#8FA6F0;
+  --trig:#A895E6; --sys:#7FA6E8; --inc:#F08A78; --wait:#6CC3BF; --data:#D8B25C; --dec:#E0A060;
+  --warn:#2D2A18; --warn-line:#6B5A1F;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
-  font:15px/1.5 "Avenir Next","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif}
-main{max-width:720px;margin:0 auto;padding:0 12px}
-header{padding:18px 4px 6px}
-h1{margin:0;font-size:22px;letter-spacing:.2px}
-header p{margin:4px 0 0;color:var(--muted);font-size:14px}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 4px 12px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:none;border:1px solid var(--line);background:var(--chip);color:var(--ink);
-  border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;cursor:pointer}
-.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-button:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.stage{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 4px}
-svg{display:block;width:100%;height:auto}
+  font:15px/1.55 "Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif}
+.hero{background:linear-gradient(135deg,var(--hdr1),var(--hdr2));color:var(--hdr-ink);
+  padding:26px 20px 22px;text-align:center}
+.hero h1{margin:0;font-size:clamp(22px,3.4vw,32px);letter-spacing:.2px}
+.hero p{margin:6px 0 0;opacity:.85;font-size:clamp(13px,1.8vw,16px)}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 40px;
+  display:grid;gap:18px;grid-template-columns:minmax(0,560px) minmax(0,1fr);align-items:start}
+@media (max-width:940px){.wrap{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.card h2{margin:0 0 10px;font-size:17px}
+.diagram{padding:10px 6px;overflow-x:auto}
+svg.flow{display:block;width:100%;min-width:480px;height:auto}
 svg text{font-family:inherit;fill:var(--ink)}
-.node rect.body{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.ed{fill:none;stroke-width:2}
+.ed.flow{stroke:var(--flow)} .ed.yes{stroke:var(--green)} .ed.no{stroke:var(--red)}
+.ed.back{stroke:var(--navy);stroke-dasharray:6 4}
+.m-flow{fill:var(--flow)} .m-yes{fill:var(--green)} .m-no{fill:var(--red)} .m-back{fill:var(--navy)}
+.node{--c:var(--sys)}
+.t-trig{--c:var(--trig)} .t-sys{--c:var(--sys)} .t-inc{--c:var(--inc)}
+.t-wait{--c:var(--wait)} .t-data{--c:var(--data)} .t-dec{--c:var(--dec)}
+.node .body{fill:color-mix(in srgb,var(--c) 9%,var(--panel));stroke:var(--c);stroke-width:1.5}
 .node .bar{fill:var(--c)}
 .node .t{font-size:13px;font-weight:700}
+.node .t.d{font-size:12px}
 .node .s{font-size:10.5px;fill:var(--muted)}
-.node polygon{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
-.node.visited rect.body,.node.visited polygon{stroke:var(--c)}
-.node.active rect.body,.node.active polygon{stroke:var(--accent);stroke-width:3;
-  fill:color-mix(in srgb,var(--accent) 14%,var(--panel))}
-.edge{fill:none;stroke:var(--line);stroke-width:2;marker-end:url(#ah)}
-.edge.back{stroke-dasharray:5 4}
-.edge.done{stroke:var(--accent);marker-end:url(#ahl)}
-.flow{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round}
-.lbl{font-size:11px;font-weight:700}
-.lbl.no{fill:var(--inc)} .lbl.yes{fill:var(--wait)}
-.note{font-size:10.5px;fill:var(--muted)}
-.halo{fill:var(--accent);opacity:.28}
-.dot{fill:var(--accent);stroke:var(--panel);stroke-width:2}
-h2{font-size:16px;margin:22px 4px 8px}
-.tablewrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.yes,.no{font-size:12px;font-weight:700}
+text.yes{fill:var(--green)} text.no{fill:var(--red)}
+text.lbl{font-size:11px;font-weight:700}
+text.note{font-size:10.5px;fill:var(--muted)}
+.side{display:grid;gap:18px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;
+  background:color-mix(in srgb,var(--warn) 40%,var(--panel))}
 table{border-collapse:collapse;width:100%;font-size:13.5px}
-th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
 tr:last-child td{border-bottom:0}
-th{color:var(--muted);font-weight:600}
+th{color:var(--muted);font-weight:600;font-size:12.5px}
 td:first-child{font-weight:700}
-.foot{color:var(--muted);font-size:13px;margin:8px 4px 90px}
-.bar-ui{position:sticky;bottom:0;z-index:5;background:var(--panel);border-top:1px solid var(--line);
-  padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));margin:0 -12px}
-.bar-ui .inner{max-width:720px;margin:0 auto}
-#cap{margin:0 0 8px;font-size:14.5px;min-height:44px}
-.ctl{display:flex;gap:8px;align-items:center}
-.ctl button,.ctl select{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--chip);
-  color:var(--ink);border-radius:8px;padding:7px 12px;cursor:pointer}
-.ctl .primary{background:var(--accent);border-color:var(--accent);color:#1b1200;font-weight:700}
-#prog{margin-left:auto;color:var(--muted);font-size:13px}
+.note-box{margin:10px 0 0;padding:10px 12px;background:var(--warn);border:1px solid var(--warn-line);
+  border-radius:8px;font-size:13px}
+.kp{margin:0;padding-left:20px}
+.kp>li{margin:0 0 10px}
+.kp ul{margin:4px 0 0;padding-left:18px}
+.kp ul ul{list-style:circle}
+.kp li li{margin:2px 0}
+code{font:12.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  background:color-mix(in srgb,var(--ink) 8%,transparent);padding:1px 5px;border-radius:4px;word-break:break-all}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;font-size:13.5px}
+.legend div{display:flex;align-items:center;gap:8px}
+.sw{width:22px;height:14px;border-radius:3px;border:1.5px solid var(--c);
+  background:color-mix(in srgb,var(--c) 18%,var(--panel));flex:none}
+.sw.dia{width:16px;height:16px;transform:rotate(45deg) scale(.8);border-radius:2px}
+.ln{width:24px;height:0;border-top:2px solid var(--flow);flex:none}
+.ln.d{border-top:2px dashed var(--navy)}
 </style>
 </head>
 <body>
-<main>
-  <header>
-    <h1>RI Process Flow</h1>
-    <p>NiFi / AutoSys: from RI trigger to posting (Subledger / CGL)</p>
-  </header>
+<header class="hero">
+  <h1>RI Process Flow: NiFi / AutoSys</h1>
+  <p>From RI trigger to posting (Subledger / CGL), including rerun and issue handling</p>
+</header>
 
-  <div class="chips" id="chips" role="group" aria-label="Choose a scenario"></div>
+<div class="wrap">
+  <section class="card diagram" aria-label="Process flow diagram">
+<svg class="flow" viewBox="0 0 520 970" role="img" aria-labelledby="ft fd">
+<title id="ft">RI process flow: NiFi / AutoSys</title>
+<desc id="fd">Flow from RIWMA Run Trigger through NiFi upload and RI run, with failure handling, success trigger, waiting for the next trigger, rerun, and posting to Subledger / CGL.</desc>
+<defs>
+<marker id="a-flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="m-flow"/></marker>
+<marker id="a-yes" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="m-yes"/></marker>
+<marker id="a-no" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="m-no"/></marker>
+<marker id="a-back" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="m-back"/></marker>
+</defs>
+<path d="M380,84 V100" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M380,150 V180" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M380,230 V260" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M380,310 V330" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M380,400 V440" class="ed yes" marker-end="url(#a-yes)"/>
+<path d="M300,365 H120 V400" class="ed no" marker-end="url(#a-no)"/>
+<path d="M40,428 H24 V584 H40" class="ed no" marker-end="url(#a-no)"/>
+<path d="M120,456 V480" class="ed no" marker-end="url(#a-no)"/>
+<path d="M200,508 H230 V472 H260" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M120,612 V636 H8 V45 H260" class="ed back" marker-end="url(#a-back)"/>
+<path d="M380,518 V548" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M380,598 V625" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M300,660 H170 V720" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M460,660 H480 V720" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M170,800 V830 H8 V45 H260" class="ed back" marker-end="url(#a-back)"/>
+<path d="M410,784 V820" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M410,864 V904" class="ed flow" marker-end="url(#a-flow)"/>
+<g class="node t-trig">
+<rect class="body" x="260" y="20" width="240" height="64" rx="7"/>
+<rect class="bar" x="260" y="27" width="4" height="50" rx="2"/>
+<text class="t" x="276" y="40">1. RIWMA places Run Trigger</text>
+<text class="s" x="276" y="57.0">{entity}_actuarial_ri_trig_</text>
+<text class="s" x="276" y="71.5">{FYYYY}_{PMM}.csv</text>
+</g>
+<g class="node t-sys">
+<rect class="body" x="260" y="100" width="240" height="50" rx="7"/>
+<rect class="bar" x="260" y="107" width="4" height="36" rx="2"/>
+<text class="t" x="276" y="120">2. NiFi reads the trigger file</text>
+<text class="s" x="276" y="137.0">Detects and reads the Run Trigger</text>
+</g>
+<g class="node t-sys">
+<rect class="body" x="260" y="180" width="240" height="50" rx="7"/>
+<rect class="bar" x="260" y="187" width="4" height="36" rx="2"/>
+<text class="t" x="276" y="200">3. NiFi uploads files to RI</text>
+<text class="s" x="276" y="217.0">Uploads the required files</text>
+</g>
+<g class="node t-sys">
+<rect class="body" x="260" y="260" width="240" height="50" rx="7"/>
+<rect class="bar" x="260" y="267" width="4" height="36" rx="2"/>
+<text class="t" x="276" y="280">4. NiFi triggers the RI run</text>
+<text class="s" x="276" y="297.0">For the specified entity, FYYYY, PMM</text>
+</g>
+<g class="node t-trig">
+<rect class="body" x="260" y="440" width="240" height="78" rx="7"/>
+<rect class="bar" x="260" y="447" width="4" height="64" rx="2"/>
+<text class="t" x="276" y="460">5. NiFi places Success Trigger</text>
+<text class="s" x="276" y="477.0">RI_NiFi_{entity}_{FYYYY}_{PMM}_</text>
+<text class="s" x="276" y="491.5">{projectId}_{completedTime}_</text>
+<text class="s" x="276" y="506.0">RIRunSuccess.txt (to riwma/incoming)</text>
+</g>
+<g class="node t-wait">
+<rect class="body" x="260" y="548" width="240" height="50" rx="7"/>
+<rect class="bar" x="260" y="555" width="4" height="36" rx="2"/>
+<text class="t" x="276" y="568">6. Wait for next trigger</text>
+<text class="s" x="276" y="585.0">Within the defined waiting window</text>
+</g>
+<g class="node t-trig">
+<rect class="body" x="60" y="720" width="220" height="80" rx="7"/>
+<rect class="bar" x="60" y="727" width="4" height="66" rx="2"/>
+<text class="t" x="76" y="740">7a. Process Run Trigger</text>
+<text class="s" x="76" y="757.0">Reads file, uploads to RI</text>
+<text class="s" x="76" y="771.5">Triggers the RI run again</text>
+<text class="s" x="76" y="786.0">Normal rerun, no incident</text>
+</g>
+<g class="node t-trig">
+<rect class="body" x="320" y="720" width="180" height="64" rx="7"/>
+<rect class="bar" x="320" y="727" width="4" height="50" rx="2"/>
+<text class="t" x="336" y="740">7b. Process Post Trigger</text>
+<text class="s" x="336" y="757.0">Triggers posting</text>
+<text class="s" x="336" y="771.5">to Subledger / CGL</text>
+</g>
+<g class="node t-data">
+<rect class="body" x="320" y="820" width="180" height="44" rx="7"/>
+<rect class="bar" x="320" y="827" width="4" height="30" rx="2"/>
+<text class="t" x="336" y="846.5">Post to Subledger / CGL</text>
+</g>
+<g class="node t-sys">
+<rect class="body" x="320" y="904" width="180" height="44" rx="7"/>
+<rect class="bar" x="320" y="911" width="4" height="30" rx="2"/>
+<text class="t" x="336" y="930.5">Process Completed</text>
+</g>
+<g class="node t-inc">
+<rect class="body" x="40" y="400" width="160" height="56" rx="7"/>
+<rect class="bar" x="40" y="407" width="4" height="42" rx="2"/>
+<text class="t" x="56" y="420">RI Run Failed</text>
+<text class="s" x="56" y="437.0">Raise incident</text>
+<text class="s" x="56" y="451.5">Investigate root cause</text>
+</g>
+<g class="node t-sys">
+<rect class="body" x="40" y="480" width="160" height="56" rx="7"/>
+<rect class="bar" x="40" y="487" width="4" height="42" rx="2"/>
+<text class="t" x="56" y="500">Non-file issue</text>
+<text class="s" x="56" y="517.0">Investigate and resolve</text>
+<text class="s" x="56" y="531.5">Manual RI run if required</text>
+</g>
+<g class="node t-trig">
+<rect class="body" x="40" y="556" width="160" height="56" rx="7"/>
+<rect class="bar" x="40" y="563" width="4" height="42" rx="2"/>
+<text class="t" x="56" y="576">File issue</text>
+<text class="s" x="56" y="593.0">Reopen RIWMA UI, update files</text>
+<text class="s" x="56" y="607.5">New Run Trigger to Step 1</text>
+</g>
+<g class="node t-dec">
+<polygon class="body" points="380,330 460,365 380,400 300,365"/>
+<text class="t d" x="380" y="364" text-anchor="middle">Did RI run</text>
+<text class="t d" x="380" y="379" text-anchor="middle">succeed?</text>
+</g>
+<g class="node t-dec">
+<polygon class="body" points="380,625 460,660 380,695 300,660"/>
+<text class="t d" x="380" y="659" text-anchor="middle">Which trigger</text>
+<text class="t d" x="380" y="674" text-anchor="middle">is received?</text>
+</g>
+<text class="yes" x="388" y="422" text-anchor="start">Yes</text>
+<text class="no" x="292" y="357" text-anchor="end">No</text>
+<text class="lbl" x="164" y="700" text-anchor="end">Run Trigger (re-run)</text>
+<text class="lbl" x="474" y="700" text-anchor="end">Post Trigger (approved)</text>
+<text class="note" x="16" y="653" text-anchor="start">New Run Trigger: Step 1</text>
+<text class="note" x="16" y="848" text-anchor="start">Rerun: back to Step 1</text>
+<text class="note" x="206" y="527" text-anchor="start">Manual RI run</text>
+<text class="note" x="206" y="539" text-anchor="start">succeeded</text>
+</svg>
+  </section>
 
-  <div class="stage">
-    <svg id="flow" viewBox="0 0 490 970" role="img" aria-label="RI process flow diagram">
-      <defs>
-        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0 0L10 5L0 10z" style="fill:var(--line)"/>
-        </marker>
-        <marker id="ahl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-          <path d="M0 0L10 5L0 10z" style="fill:var(--accent)"/>
-        </marker>
-      </defs>
-    </svg>
-  </div>
+  <div class="side">
+    <section class="card">
+      <h2>Waiting window after RI run completion (by entity)</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Entity</th><th>Expected approval / post timing (AutoSys)</th><th>NiFi waiting window</th></tr></thead>
+          <tbody>
+            <tr><td>BD2</td><td>AutoSys job at 4:00 PM</td><td>Wait until 4:00 PM</td></tr>
+            <tr><td>SJLI</td><td>Auto-approved at 12:00 AM on BD3</td><td>Wait until 4:00 AM</td></tr>
+            <tr><td>SLTT</td><td>Approval timing to be confirmed</td><td>Wait until 4:00 AM</td></tr>
+            <tr><td>SIBL</td><td>Auto-approved at 12:00 PM (noon) on BD3</td><td>Wait until 4:00 PM</td></tr>
+            <tr><td>SCRE</td><td>Auto-approved at 12:00 PM (noon) on BD3</td><td>Wait until 4:00 PM</td></tr>
+            <tr><td>BNS</td><td>Approval timing to be confirmed</td><td>Wait until 8:00 PM on BD3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note-box"><strong>Note:</strong> The waiting window is the expected time for NiFi to receive the next trigger (Post or Run) after the RI run completes successfully.</p>
+    </section>
 
-  <h2>Waiting window after RI run completion, by entity</h2>
-  <div class="tablewrap">
-    <table>
-      <thead><tr><th>Entity</th><th>Expected approval / post timing (AutoSys)</th><th>NiFi waiting window</th></tr></thead>
-      <tbody>
-        <tr><td>BD2</td><td>AutoSys job at 4:00 PM</td><td>Wait until 4:00 PM</td></tr>
-        <tr><td>SJLI</td><td>Auto-approved at 12:00 AM on BD3</td><td>Wait until 4:00 AM</td></tr>
-        <tr><td>SLTT</td><td>Approval timing to be confirmed</td><td>Wait until 4:00 AM</td></tr>
-        <tr><td>SIBL</td><td>Auto-approved at 12:00 PM (noon) on BD3</td><td>Wait until 4:00 PM</td></tr>
-        <tr><td>SCRE</td><td>Auto-approved at 12:00 PM (noon) on BD3</td><td>Wait until 4:00 PM</td></tr>
-        <tr><td>BNS</td><td>Approval timing to be confirmed</td><td>Wait until 8:00 PM on BD3</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p class="foot">The waiting window is the expected time for NiFi to receive the next trigger (Post or Run) after the RI run completes successfully.</p>
-</main>
+    <section class="card">
+      <h2>Key points</h2>
+      <ol class="kp">
+        <li>RIWMA places a Run Trigger file: <code>{entity}_actuarial_ri_trig_{FYYYY}_{PMM}.csv</code></li>
+        <li>NiFi reads the trigger file, uploads the required files to RI, and triggers the RI run.</li>
+        <li>If the RI run fails, raise an incident and investigate the issue.
+          <ul>
+            <li><strong>File issue:</strong>
+              <ul>
+                <li>Reopen RIWMA UI for the user to update the file(s).</li>
+                <li>A new Run Trigger will be sent by RIWMA, which returns to Step 1.</li>
+              </ul>
+            </li>
+            <li><strong>Non-file related issue:</strong>
+              <ul>
+                <li>Investigate and resolve.</li>
+                <li>Manually run RI if required.</li>
+                <li>If the manual RI run completes successfully, NiFi manually places the same success trigger file in riwma/incoming, and the process continues from Step 5.</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li>When the RI run completes successfully (normal or manual), NiFi places the RI Run Success Trigger file in riwma/incoming: <code>RI_NiFi_{entity}_{FYYYY}_{PMM}_{projectId}_{completedTime}_RIRunSuccess.txt</code></li>
+        <li>NiFi waits for the next trigger within the defined waiting window. The next trigger can be either:
+          <ul>
+            <li>Post Trigger: trigger posting to Subledger / CGL (approved result).</li>
+            <li>Run Trigger: rerun RI. Normal process, no incident / ticket required.</li>
+          </ul>
+        </li>
+        <li>Once the Post Trigger is processed, posting to Subledger / CGL is triggered and the process completes (or continues with downstream AutoSys jobs).</li>
+      </ol>
+    </section>
 
-<div class="bar-ui">
-  <div class="inner">
-    <p id="cap" aria-live="polite">Pick a scenario, then press Play.</p>
-    <div class="ctl">
-      <button class="primary" id="play">Play</button>
-      <button id="next">Next step</button>
-      <button id="restart">Restart</button>
-      <select id="speed" aria-label="Speed">
-        <option value="0.5">0.5x</option>
-        <option value="1" selected>1x</option>
-        <option value="2">2x</option>
-      </select>
-      <span id="prog"></span>
-    </div>
+    <section class="card">
+      <h2>Legend</h2>
+      <div class="legend">
+        <div style="--c:var(--trig)"><span class="sw"></span>Trigger file</div>
+        <div style="--c:var(--sys)"><span class="sw"></span>System action</div>
+        <div style="--c:var(--wait)"><span class="sw"></span>Waiting</div>
+        <div style="--c:var(--data)"><span class="sw"></span>Posting / data store</div>
+        <div style="--c:var(--inc)"><span class="sw"></span>Incident</div>
+        <div style="--c:var(--dec)"><span class="sw dia"></span>Decision</div>
+        <div><span class="ln"></span>Process flow</div>
+        <div><span class="ln d"></span>Return to Step 1 (normal rerun)</div>
+      </div>
+    </section>
   </div>
 </div>
-
-<script>
-(function(){
-const NS='http://www.w3.org/2000/svg';
-const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const svg=document.getElementById('flow');
-function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in (a||{}))e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
-
-/* ---------- 1. 架构配置：节点 ---------- */
-const NODES=[
- {id:'n1',x:230,y:20,w:240,h:50,c:'trig',t:'1. RIWMA places Run Trigger',s:['{entity}_actuarial_ri_trig_…csv']},
- {id:'n2',x:230,y:100,w:240,h:50,c:'sys',t:'2. NiFi reads the trigger file',s:['detects and reads the Run Trigger']},
- {id:'n3',x:230,y:180,w:240,h:50,c:'sys',t:'3. NiFi uploads files to RI',s:['uploads the required files']},
- {id:'n4',x:230,y:260,w:240,h:50,c:'sys',t:'4. NiFi triggers the RI run',s:['for the specified entity, FYYYY, PMM']},
- {id:'d1',kind:'dia',cx:350,cy:365,hw:80,hh:35,l:['Did RI run','succeed?']},
- {id:'n5',x:230,y:440,w:240,h:50,c:'trig',t:'5. NiFi places Success Trigger',s:['RI_NiFi_…_RIRunSuccess.txt to riwma/incoming']},
- {id:'n6',x:230,y:520,w:240,h:50,c:'wait',t:'6. Wait for next trigger',s:['within the defined waiting window']},
- {id:'d2',kind:'dia',cx:350,cy:640,hw:80,hh:35,l:['Which trigger','is received?']},
- {id:'n7a',x:60,y:720,w:220,h:80,c:'trig',t:'7a. Process Run Trigger',s:['Reads file, uploads to RI','Triggers the RI run again','Normal rerun, no incident']},
- {id:'n7b',x:290,y:720,w:180,h:64,c:'trig',t:'7b. Process Post Trigger',s:['Triggers posting','to Subledger / CGL']},
- {id:'post',x:290,y:820,w:180,h:44,c:'data',t:'Post to Subledger / CGL',s:[]},
- {id:'done',x:290,y:904,w:180,h:44,c:'sys',t:'Process Completed',s:[]},
- {id:'fail',x:40,y:400,w:160,h:56,c:'inc',t:'RI Run Failed',s:['Raise an incident','Investigate root cause']},
- {id:'nonfile',x:40,y:480,w:160,h:56,c:'sys',t:'Non-file issue',s:['Investigate and resolve','Manual RI run if required']},
- {id:'file',x:40,y:556,w:160,h:56,c:'trig',t:'File issue',s:['Reopen RIWMA UI, update files','New Run Trigger to Step 1']}
-];
-
-/* ---------- 2. 连线 ---------- */
-const EDGES=[
- ['e_12','M350,70 V100'],['e_23','M350,150 V180'],['e_34','M350,230 V260'],['e_4d','M350,310 V330'],
- ['e_yes','M350,400 V440'],
- ['e_no','M270,365 H120 V400'],
- ['e_ff','M40,428 H24 V584 H40'],
- ['e_fn','M120,456 V480'],
- ['e_ns','M200,508 H215 V465 H230'],
- ['e_fb','M120,612 V636 H8 V45 H230','back'],
- ['e_56','M350,490 V520'],['e_6d','M350,570 V605'],
- ['e_run','M270,640 H170 V720'],
- ['e_post','M430,640 H450 V720'],
- ['e_rerun','M170,800 V830 H8 V45 H230','back'],
- ['e_7b','M380,784 V820'],['e_pd','M380,864 V904']
-];
-
-/* ---------- 3. 说明文字 ---------- */
-const CAP={
- n1:'1. RIWMA places the Run Trigger file: {entity}_actuarial_ri_trig_{FYYYY}_{PMM}.csv',
- n1b:'Back to Step 1: a new Run Trigger from RIWMA starts a new cycle.',
- n2:'2. NiFi detects and reads the trigger file.',
- n3:'3. NiFi uploads the required files to RI.',
- n4:'4. NiFi triggers the RI run for the specified entity, FYYYY, PMM.',
- d1:'Decision: did the RI run complete successfully?',
- n5:'5. After a successful RI run (including a manual run), NiFi places the RI Run Success Trigger file in riwma/incoming.',
- n6:'6. NiFi waits within the defined window for the next trigger: either a Post Trigger or a Run Trigger.',
- d2:'Decision: which trigger is received?',
- n7a:'7a. Run Trigger (rerun): NiFi reads the file, uploads it, and triggers the RI run again. Normal rerun, no incident / ticket required.',
- n7b:'7b. Post Trigger (approved): NiFi reads it and triggers posting.',
- post:'Posting to Subledger / CGL.',
- done:'Process completed, or continues with downstream AutoSys jobs.',
- fail:'RI run failed: raise an incident and investigate the root cause (file issue or non-file related issue).',
- file:'File issue: reopen the RIWMA UI so the user can update the file(s).',
- nonfile:'Non-file issue: investigate and resolve, and manually run RI if required. When the manual run succeeds, NiFi places the same success trigger file.'
-};
-const ECAP={
- e_yes:'Yes: the RI run completed successfully.',
- e_no:'No: the RI run failed.',
- e_run:'Run Trigger received: rerun requested.',
- e_post:'Post Trigger received: approved.',
- e_rerun:'Normal rerun, no incident. Back to Step 1.',
- e_fb:'A new Run Trigger will be sent by RIWMA. Back to Step 1.',
- e_ns:'Manual RI run completed successfully. The process continues from Step 5.'
-};
-
-/* ---------- 4. 场景 = 经过的节点和连线序列 ---------- */
-const HEAD=['n1','e_12','n2','e_23','n3','e_34','n4','e_4d','d1'];
-const TAIL_OK=['e_yes','n5','e_56','n6','e_6d','d2'];
-const POST=['e_post','n7b','e_7b','post','e_pd','done'];
-const SCEN=[
- {k:'ok',name:'Normal success',ev:[...HEAD,...TAIL_OK,...POST]},
- {k:'rerun',name:'Rerun',ev:[...HEAD,...TAIL_OK,'e_run','n7a','e_rerun','n1b']},
- {k:'file',name:'Failed: file issue',ev:[...HEAD,'e_no','fail','e_ff','file','e_fb','n1b']},
- {k:'nonfile',name:'Failed: non-file issue',ev:[...HEAD,'e_no','fail','e_fn','nonfile','e_ns','n5','e_56','n6','e_6d','d2',...POST]}
-];
-/* e_fb 的路径和 e_fb 说明共用：把 e_ff 之后的返回线标为 e_fb */
-
-/* ---------- 绘制 ---------- */
-const gE=el('g',{},svg), gN=el('g',{},svg), gL=el('g',{},svg);
-const edgeMap={}, nodeMap={}, nodeCenter={};
-EDGES.forEach(([id,d,cls])=>{
-  const p=el('path',{d,id,class:'edge '+(cls||'')},gE);
-  const ov=el('path',{d,class:'flow'},gE);
-  const len=p.getTotalLength();
-  ov.style.strokeDasharray=len; ov.style.strokeDashoffset=len;
-  edgeMap[id]={p,ov,len};
-});
-NODES.forEach(n=>{
-  const g=el('g',{class:'node',id:n.id},gN);
-  g.style.setProperty('--c',`var(--${n.c||'sys'})`);
-  if(n.kind==='dia'){
-    el('polygon',{points:`${n.cx},${n.cy-n.hh} ${n.cx+n.hw},${n.cy} ${n.cx},${n.cy+n.hh} ${n.cx-n.hw},${n.cy}`},g);
-    g.style.setProperty('--c','var(--inc)');
-    n.l.forEach((t,i)=>{const tx=el('text',{x:n.cx,y:n.cy-2+i*15,'text-anchor':'middle',class:'s'},g);
-      tx.style.fill='var(--ink)'; tx.style.fontSize='11.5px'; tx.style.fontWeight='700'; tx.textContent=t;});
-    nodeCenter[n.id]=[n.cx,n.cy];
-  }else{
-    el('rect',{x:n.x,y:n.y,width:n.w,height:n.h,rx:7,class:'body'},g);
-    el('rect',{x:n.x,y:n.y+7,width:4,height:n.h-14,rx:2,class:'bar'},g);
-    el('text',{x:n.x+16,y:n.y+19,class:'t'},g).textContent=n.t;
-    n.s.forEach((t,i)=>{el('text',{x:n.x+16,y:n.y+35+i*14.5,class:'s'},g).textContent=t;});
-    nodeCenter[n.id]=[n.x+n.w/2,n.y+n.h/2];
-  }
-  nodeMap[n.id]=g;
-});
-function lab(x,y,t,cls,anchor){const e=el('text',{x,y,class:'lbl '+cls,'text-anchor':anchor||'start'},gL);e.textContent=t;}
-lab(358,422,'Yes','yes'); lab(262,357,'No','no','end');
-lab(164,700,'Run Trigger','',"end"); lab(444,700,'Post Trigger','','end');
-el('text',{x:16,y:656,class:'note'},gL).textContent='New Run Trigger: back to Step 1';
-el('text',{x:16,y:822,class:'note'},gL).textContent='Rerun: back to Step 1';
-el('text',{x:222,y:500,class:'note','text-anchor':'start'},gL).textContent='';
-const token=el('g',{opacity:0},svg);
-el('circle',{r:12,class:'halo'},token); el('circle',{r:6,class:'dot'},token);
-
-/* ---------- 引擎 ---------- */
-const capEl=document.getElementById('cap'), progEl=document.getElementById('prog');
-const playBtn=document.getElementById('play'), nextBtn=document.getElementById('next');
-const restartBtn=document.getElementById('restart'), speedSel=document.getElementById('speed');
-const chipsEl=document.getElementById('chips'), barEl=document.querySelector('.bar-ui');
-let gen=0, idx=0, playing=false, busy=false, events=SCEN[0].ev, speed=1, tokenShown=false;
-
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-function setCap(t){capEl.textContent=t||'';}
-function setProg(){progEl.textContent=events.length?`${Math.min(idx+1,events.length)} / ${events.length}`:'';}
-function setPlayLabel(){playBtn.textContent=playing?'Pause':(idx>=events.length&&idx>0?'Play again':'Play');}
-
-function inView(r,pad){const top=pad, bottom=innerHeight-barEl.offsetHeight-pad;return r.top>=top&&r.bottom<=bottom;}
-function reveal(node){
-  const r=node.getBoundingClientRect();
-  if(inView(r,70)) return;
-  const mid=(r.top+r.bottom)/2, want=(70+innerHeight-barEl.offsetHeight-70)/2;
-  scrollBy({top:mid-want,behavior:reduced?'auto':'smooth'});
-}
-
-function resetVisuals(){
-  gen++; idx=0; busy=false; playing=false; tokenShown=false;
-  token.setAttribute('opacity',0);
-  document.querySelectorAll('.node').forEach(n=>n.classList.remove('active','visited'));
-  Object.values(edgeMap).forEach(({p,ov,len})=>{p.classList.remove('done');ov.style.strokeDashoffset=len;});
-  setCap('Pick a scenario and press Play, or use Next step to go one step at a time.'); setProg(); setPlayLabel();
-}
-
-function travel(id,my){
-  return new Promise(res=>{
-    const {p,len}=edgeMap[id], ov=edgeMap[id].ov;
-    const dur=reduced?250:Math.max(380,len/(230*speed)*1000);
-    const t0=performance.now(); let lastRev=0;
-    token.setAttribute('opacity',1); tokenShown=true;
-    (function f(now){
-      if(my!==gen) return res();
-      const k=Math.min(1,(now-t0)/dur);
-      const pt=p.getPointAtLength(len*k);
-      token.setAttribute('transform',`translate(${pt.x},${pt.y})`);
-      ov.style.strokeDashoffset=len*(1-k);
-      if(now-lastRev>300){lastRev=now;reveal(token);}
-      if(k<1) requestAnimationFrame(f); else {p.classList.add('done');res();}
-    })(t0);
-  });
-}
-async function arrive(id,my){
-  const key=id==='n1b'?'n1':id, g=nodeMap[key];
-  document.querySelectorAll('.node.active').forEach(n=>{n.classList.remove('active');n.classList.add('visited');});
-  g.classList.add('active');
-  setCap(CAP[id]);
-  if(!tokenShown){const c=nodeCenter[key];token.setAttribute('transform',`translate(${c[0]},${c[1]})`);token.setAttribute('opacity',1);tokenShown=true;}
-  reveal(g);
-  const isDia=id==='d1'||id==='d2';
-  await sleep((reduced?350:(isDia?1000:750))/speed);
-}
-async function exec(ev,my){
-  setProg();
-  if(ev.startsWith('e_')){
-    const eid=(ev==='e_ff')?'e_ff':ev;
-    const msg=ECAP[ev==='e_ff'?'e_ff':ev];
-    if(msg) setCap(msg);
-    await travel(eid,my);
-  }else{
-    await arrive(ev,my);
-  }
-}
-async function loop(){
-  if(busy) return; busy=true; const my=gen;
-  while(playing && idx<events.length){
-    await exec(events[idx],my);
-    if(my!==gen){return;}
-    idx++;
-  }
-  busy=false; playing=false; setProg(); setPlayLabel();
-}
-async function step(){
-  if(busy) return;
-  if(idx>=events.length){resetVisuals();}
-  playing=false; busy=true; const my=gen;
-  await exec(events[idx],my);
-  if(my!==gen) return;
-  idx++; busy=false; setPlayLabel();
-}
-function selectScenario(i){
-  events=SCEN[i].ev;
-  [...chipsEl.children].forEach((c,j)=>c.setAttribute('aria-pressed',String(i===j)));
-  resetVisuals();
-}
-
-/* e_ff 的说明：用一个专门的提示 */
-ECAP.e_ff='File issue branch.';
-
-SCEN.forEach((s,i)=>{
-  const b=document.createElement('button'); b.className='chip'; b.textContent=s.name;
-  b.setAttribute('aria-pressed',i===0?'true':'false');
-  b.addEventListener('click',()=>selectScenario(i));
-  chipsEl.appendChild(b);
-});
-playBtn.addEventListener('click',()=>{
-  if(playing){playing=false;setPlayLabel();return;}
-  if(!busy && idx>=events.length){resetVisuals();}
-  playing=true; setPlayLabel(); loop();
-});
-nextBtn.addEventListener('click',step);
-restartBtn.addEventListener('click',resetVisuals);
-speedSel.addEventListener('change',()=>{speed=parseFloat(speedSel.value);});
-resetVisuals();
-})();
-</script>
 </body>
 </html>
