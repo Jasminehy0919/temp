@@ -42,12 +42,12 @@ body{margin:0;background:var(--bg);color:var(--ink);
 .hero h1{margin:0;font-size:clamp(22px,3.4vw,32px);letter-spacing:.2px}
 .hero p{margin:6px 0 0;opacity:.85;font-size:clamp(13px,1.8vw,16px)}
 .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 40px;
-  display:grid;gap:18px;grid-template-columns:minmax(0,560px) minmax(0,1fr);align-items:start}
+  display:grid;gap:18px;grid-template-columns:minmax(0,760px) minmax(0,1fr);align-items:start}
 @media (max-width:940px){.wrap{grid-template-columns:minmax(0,1fr)}}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
 .card h2{margin:0 0 10px;font-size:17px}
 .diagram{padding:10px 6px;overflow-x:auto}
-svg.flow{display:block;width:100%;min-width:480px;height:auto}
+svg.flow{display:block;width:100%;min-width:560px;height:auto}
 svg text{font-family:inherit;fill:var(--ink)}
 .ed{fill:none;stroke-width:2}
 .ed.flow{stroke:var(--flow)} .ed.yes{stroke:var(--green)} .ed.no{stroke:var(--red)}
@@ -99,7 +99,7 @@ code{font:12.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 
 <div class="wrap">
   <section class="card diagram" aria-label="Process flow diagram">
-<svg class="flow" viewBox="0 0 520 970" role="img" aria-labelledby="ft fd">
+<svg class="flow" viewBox="0 0 780 970" role="img" aria-labelledby="ft fd">
 <title id="ft">RI process flow: NiFi / AutoSys</title>
 <desc id="fd">Flow from RIWMA Run Trigger through NiFi upload and RI run, with failure handling, success trigger, waiting for the next trigger, rerun, and posting to Subledger / CGL.</desc>
 <defs>
@@ -108,126 +108,128 @@ code{font:12.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 <marker id="a-no" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="m-no"/></marker>
 <marker id="a-back" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="m-back"/></marker>
 </defs>
-<path d="M380,84 V100" class="ed flow" marker-end="url(#a-flow)"/>
-<path d="M380,150 V180" class="ed flow" marker-end="url(#a-flow)"/>
-<path d="M380,230 V260" class="ed flow" marker-end="url(#a-flow)"/>
-<path d="M380,310 V330" class="ed flow" marker-end="url(#a-flow)"/>
-<path d="M380,400 V440" class="ed yes" marker-end="url(#a-yes)"/>
-<path d="M300,365 H120 V400" class="ed no" marker-end="url(#a-no)"/>
-<path d="M40,428 H24 V584 H40" class="ed no" marker-end="url(#a-no)"/>
-<path d="M120,456 V480" class="ed no" marker-end="url(#a-no)"/>
-<path d="M200,508 H230 V472 H260" class="ed flow" marker-end="url(#a-flow)"/>
-<path d="M120,612 V636 H8 V45 H260" class="ed back" marker-end="url(#a-back)"/>
-<path d="M380,518 V548" class="ed flow" marker-end="url(#a-flow)"/>
-<path d="M380,598 V625" class="ed flow" marker-end="url(#a-flow)"/>
-<path d="M300,660 H170 V720" class="ed flow" marker-end="url(#a-flow)"/>
-<path d="M460,660 H480 V720" class="ed flow" marker-end="url(#a-flow)"/>
-<path d="M170,800 V830 H8 V45 H260" class="ed back" marker-end="url(#a-back)"/>
-<path d="M410,784 V820" class="ed flow" marker-end="url(#a-flow)"/>
-<path d="M410,864 V904" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M550,84 V100" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M550,150 V180" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M550,230 V260" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M550,310 V330" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M550,400 V440" class="ed yes" marker-end="url(#a-yes)"/>
+<path d="M470,365 H315" class="ed no" marker-end="url(#a-no)"/>
+<path d="M235,393 V416 H115 V440" class="ed no" marker-end="url(#a-no)"/>
+<path d="M235,393 V416 H300 V440" class="ed no" marker-end="url(#a-no)"/>
+<path d="M385,486 H430" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M115,532 V556 H8 V45 H430" class="ed back" marker-end="url(#a-back)"/>
+<path d="M550,532 V552" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M550,602 V625" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M470,660 H435 V720" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M630,660 H665 V720" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M435,800 V830 H8 V45 H430" class="ed back" marker-end="url(#a-back)"/>
+<path d="M665,784 V820" class="ed flow" marker-end="url(#a-flow)"/>
+<path d="M665,864 V904" class="ed flow" marker-end="url(#a-flow)"/>
 <g class="node t-trig">
-<rect class="body" x="260" y="20" width="240" height="64" rx="7"/>
-<rect class="bar" x="260" y="27" width="4" height="50" rx="2"/>
-<text class="t" x="276" y="40">1. RIWMA places Run Trigger</text>
-<text class="s" x="276" y="57.0">{entity}_actuarial_ri_trig_</text>
-<text class="s" x="276" y="71.5">{FYYYY}_{PMM}.csv</text>
+<rect class="body" x="430" y="20" width="240" height="64" rx="7"/>
+<rect class="bar" x="430" y="27" width="4" height="50" rx="2"/>
+<text class="t" x="446" y="40">1. RIWMA places Run Trigger</text>
+<text class="s" x="446" y="57.0">{entity}_actuarial_ri_trig_</text>
+<text class="s" x="446" y="71.5">{FYYYY}_{PMM}.csv</text>
 </g>
 <g class="node t-sys">
-<rect class="body" x="260" y="100" width="240" height="50" rx="7"/>
-<rect class="bar" x="260" y="107" width="4" height="36" rx="2"/>
-<text class="t" x="276" y="120">2. NiFi reads the trigger file</text>
-<text class="s" x="276" y="137.0">Detects and reads the Run Trigger</text>
+<rect class="body" x="430" y="100" width="240" height="50" rx="7"/>
+<rect class="bar" x="430" y="107" width="4" height="36" rx="2"/>
+<text class="t" x="446" y="120">2. NiFi reads the trigger file</text>
+<text class="s" x="446" y="137.0">Detects and reads the Run Trigger</text>
 </g>
 <g class="node t-sys">
-<rect class="body" x="260" y="180" width="240" height="50" rx="7"/>
-<rect class="bar" x="260" y="187" width="4" height="36" rx="2"/>
-<text class="t" x="276" y="200">3. NiFi uploads files to RI</text>
-<text class="s" x="276" y="217.0">Uploads the required files</text>
+<rect class="body" x="430" y="180" width="240" height="50" rx="7"/>
+<rect class="bar" x="430" y="187" width="4" height="36" rx="2"/>
+<text class="t" x="446" y="200">3. NiFi uploads files to RI</text>
+<text class="s" x="446" y="217.0">Uploads the required files</text>
 </g>
 <g class="node t-sys">
-<rect class="body" x="260" y="260" width="240" height="50" rx="7"/>
-<rect class="bar" x="260" y="267" width="4" height="36" rx="2"/>
-<text class="t" x="276" y="280">4. NiFi triggers the RI run</text>
-<text class="s" x="276" y="297.0">For the specified entity, FYYYY, PMM</text>
+<rect class="body" x="430" y="260" width="240" height="50" rx="7"/>
+<rect class="bar" x="430" y="267" width="4" height="36" rx="2"/>
+<text class="t" x="446" y="280">4. NiFi triggers the RI run</text>
+<text class="s" x="446" y="297.0">For the specified entity, FYYYY, PMM</text>
 </g>
 <g class="node t-trig">
-<rect class="body" x="260" y="440" width="240" height="78" rx="7"/>
-<rect class="bar" x="260" y="447" width="4" height="64" rx="2"/>
-<text class="t" x="276" y="460">5. NiFi places Success Trigger</text>
-<text class="s" x="276" y="477.0">RI_NiFi_{entity}_{FYYYY}_{PMM}_</text>
-<text class="s" x="276" y="491.5">{projectId}_{completedTime}_</text>
-<text class="s" x="276" y="506.0">RIRunSuccess.txt (to riwma/incoming)</text>
+<rect class="body" x="430" y="440" width="240" height="92" rx="7"/>
+<rect class="bar" x="430" y="447" width="4" height="78" rx="2"/>
+<text class="t" x="446" y="460">5. NiFi places Success Trigger</text>
+<text class="s" x="446" y="477.0">RI_NiFi_{entity}_{FYYYY}_{PMM}_</text>
+<text class="s" x="446" y="491.5">{projectId}_{completedTime}_</text>
+<text class="s" x="446" y="506.0">RIRunSuccess.txt (to riwma/incoming)</text>
 </g>
 <g class="node t-wait">
-<rect class="body" x="260" y="548" width="240" height="50" rx="7"/>
-<rect class="bar" x="260" y="555" width="4" height="36" rx="2"/>
-<text class="t" x="276" y="568">6. Wait for next trigger</text>
-<text class="s" x="276" y="585.0">Within the defined waiting window</text>
+<rect class="body" x="430" y="552" width="240" height="50" rx="7"/>
+<rect class="bar" x="430" y="559" width="4" height="36" rx="2"/>
+<text class="t" x="446" y="572">6. Wait for next trigger</text>
+<text class="s" x="446" y="589.0">Within the defined waiting window</text>
 </g>
 <g class="node t-trig">
-<rect class="body" x="60" y="720" width="220" height="80" rx="7"/>
-<rect class="bar" x="60" y="727" width="4" height="66" rx="2"/>
-<text class="t" x="76" y="740">7a. Process Run Trigger</text>
-<text class="s" x="76" y="757.0">Reads file, uploads to RI</text>
-<text class="s" x="76" y="771.5">Triggers the RI run again</text>
-<text class="s" x="76" y="786.0">Normal rerun, no incident</text>
+<rect class="body" x="330" y="720" width="210" height="80" rx="7"/>
+<rect class="bar" x="330" y="727" width="4" height="66" rx="2"/>
+<text class="t" x="346" y="740">7a. Process Run Trigger</text>
+<text class="s" x="346" y="757.0">Reads file, uploads to RI</text>
+<text class="s" x="346" y="771.5">Triggers the RI run again</text>
+<text class="s" x="346" y="786.0">Normal rerun, no incident</text>
 </g>
 <g class="node t-trig">
-<rect class="body" x="320" y="720" width="180" height="64" rx="7"/>
-<rect class="bar" x="320" y="727" width="4" height="50" rx="2"/>
-<text class="t" x="336" y="740">7b. Process Post Trigger</text>
-<text class="s" x="336" y="757.0">Triggers posting</text>
-<text class="s" x="336" y="771.5">to Subledger / CGL</text>
+<rect class="body" x="560" y="720" width="210" height="64" rx="7"/>
+<rect class="bar" x="560" y="727" width="4" height="50" rx="2"/>
+<text class="t" x="576" y="740">7b. Process Post Trigger</text>
+<text class="s" x="576" y="757.0">Triggers posting</text>
+<text class="s" x="576" y="771.5">to Subledger / CGL</text>
 </g>
 <g class="node t-data">
-<rect class="body" x="320" y="820" width="180" height="44" rx="7"/>
-<rect class="bar" x="320" y="827" width="4" height="30" rx="2"/>
-<text class="t" x="336" y="846.5">Post to Subledger / CGL</text>
+<rect class="body" x="560" y="820" width="210" height="44" rx="7"/>
+<rect class="bar" x="560" y="827" width="4" height="30" rx="2"/>
+<text class="t" x="576" y="846.5">8. Post to Subledger / CGL</text>
 </g>
 <g class="node t-sys">
-<rect class="body" x="320" y="904" width="180" height="44" rx="7"/>
-<rect class="bar" x="320" y="911" width="4" height="30" rx="2"/>
-<text class="t" x="336" y="930.5">Process Completed</text>
+<rect class="body" x="560" y="904" width="210" height="44" rx="7"/>
+<rect class="bar" x="560" y="911" width="4" height="30" rx="2"/>
+<text class="t" x="576" y="930.5">Process Completed</text>
 </g>
 <g class="node t-inc">
-<rect class="body" x="40" y="400" width="160" height="56" rx="7"/>
-<rect class="bar" x="40" y="407" width="4" height="42" rx="2"/>
-<text class="t" x="56" y="420">RI Run Failed</text>
-<text class="s" x="56" y="437.0">Raise incident</text>
-<text class="s" x="56" y="451.5">Investigate root cause</text>
-</g>
-<g class="node t-sys">
-<rect class="body" x="40" y="480" width="160" height="56" rx="7"/>
-<rect class="bar" x="40" y="487" width="4" height="42" rx="2"/>
-<text class="t" x="56" y="500">Non-file issue</text>
-<text class="s" x="56" y="517.0">Investigate and resolve</text>
-<text class="s" x="56" y="531.5">Manual RI run if required</text>
+<rect class="body" x="155" y="337" width="160" height="56" rx="7"/>
+<rect class="bar" x="155" y="344" width="4" height="42" rx="2"/>
+<text class="t" x="171" y="357">Investigation</text>
+<text class="s" x="171" y="374.0">Raise an incident</text>
+<text class="s" x="171" y="388.5">Identify root cause</text>
 </g>
 <g class="node t-trig">
-<rect class="body" x="40" y="556" width="160" height="56" rx="7"/>
-<rect class="bar" x="40" y="563" width="4" height="42" rx="2"/>
-<text class="t" x="56" y="576">File issue</text>
-<text class="s" x="56" y="593.0">Reopen RIWMA UI, update files</text>
-<text class="s" x="56" y="607.5">New Run Trigger to Step 1</text>
+<rect class="body" x="30" y="440" width="170" height="92" rx="7"/>
+<rect class="bar" x="30" y="447" width="4" height="78" rx="2"/>
+<text class="t" x="46" y="460">Fix requires</text>
+<text class="t" x="46" y="475">modifying files</text>
+<text class="s" x="46" y="492.0">Reopen RIWMA UI,</text>
+<text class="s" x="46" y="506.5">update the file(s)</text>
+<text class="s" x="46" y="521.0">New Run Trigger to Step 1</text>
+</g>
+<g class="node t-sys">
+<rect class="body" x="215" y="440" width="170" height="92" rx="7"/>
+<rect class="bar" x="215" y="447" width="4" height="78" rx="2"/>
+<text class="t" x="231" y="460">Fix does not require</text>
+<text class="t" x="231" y="475">modifying files</text>
+<text class="s" x="231" y="492.0">Investigate and resolve</text>
+<text class="s" x="231" y="506.5">Manual RI run if required</text>
 </g>
 <g class="node t-dec">
-<polygon class="body" points="380,330 460,365 380,400 300,365"/>
-<text class="t d" x="380" y="364" text-anchor="middle">Did RI run</text>
-<text class="t d" x="380" y="379" text-anchor="middle">succeed?</text>
+<polygon class="body" points="550,330 630,365 550,400 470,365"/>
+<text class="t d" x="550" y="364" text-anchor="middle">Did RI run</text>
+<text class="t d" x="550" y="379" text-anchor="middle">succeed?</text>
 </g>
 <g class="node t-dec">
-<polygon class="body" points="380,625 460,660 380,695 300,660"/>
-<text class="t d" x="380" y="659" text-anchor="middle">Which trigger</text>
-<text class="t d" x="380" y="674" text-anchor="middle">is received?</text>
+<polygon class="body" points="550,625 630,660 550,695 470,660"/>
+<text class="t d" x="550" y="659" text-anchor="middle">Which trigger</text>
+<text class="t d" x="550" y="674" text-anchor="middle">is received?</text>
 </g>
-<text class="yes" x="388" y="422" text-anchor="start">Yes</text>
-<text class="no" x="292" y="357" text-anchor="end">No</text>
-<text class="lbl" x="164" y="700" text-anchor="end">Run Trigger (re-run)</text>
-<text class="lbl" x="474" y="700" text-anchor="end">Post Trigger (approved)</text>
-<text class="note" x="16" y="653" text-anchor="start">New Run Trigger: Step 1</text>
+<text class="yes" x="558" y="422" text-anchor="start">Yes</text>
+<text class="no" x="392" y="357" text-anchor="middle">No</text>
+<text class="lbl" x="429" y="700" text-anchor="end">Run Trigger (re-run)</text>
+<text class="lbl" x="659" y="700" text-anchor="end">Post Trigger (approved)</text>
+<text class="note" x="16" y="573" text-anchor="start">New Run Trigger: Step 1</text>
 <text class="note" x="16" y="848" text-anchor="start">Rerun: back to Step 1</text>
-<text class="note" x="206" y="527" text-anchor="start">Manual RI run</text>
-<text class="note" x="206" y="539" text-anchor="start">succeeded</text>
+<text class="note" x="300" y="550" text-anchor="middle">Manual RI run succeeded: Step 5</text>
 </svg>
   </section>
 
@@ -257,13 +259,13 @@ code{font:12.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
         <li>NiFi reads the trigger file, uploads the required files to RI, and triggers the RI run.</li>
         <li>If the RI run fails, raise an incident and investigate the issue.
           <ul>
-            <li><strong>File issue:</strong>
+            <li><strong>Fix requires modifying files:</strong>
               <ul>
                 <li>Reopen RIWMA UI for the user to update the file(s).</li>
                 <li>A new Run Trigger will be sent by RIWMA, which returns to Step 1.</li>
               </ul>
             </li>
-            <li><strong>Non-file related issue:</strong>
+            <li><strong>Fix does not require modifying files:</strong>
               <ul>
                 <li>Investigate and resolve.</li>
                 <li>Manually run RI if required.</li>
